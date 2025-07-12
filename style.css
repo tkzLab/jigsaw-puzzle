@@ -1,0 +1,41 @@
+body {
+  background: #111;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+}
+
+#puzzle-container {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 4px;
+  justify-content: center;
+  margin: 30px auto;
+  width: 312px;
+  background: #222;
+  padding: 6px;
+  border-radius: 12px;
+}
+
+.puzzle-piece {
+  width: 100px;
+  height: 100px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background: #333;
+  cursor: grab;
+  transition: box-shadow 0.2s;
+}
+
+.puzzle-piece.dragging {
+  box-shadow: 0 0 16px 4px #ff0;
+  z-index: 10;
+}
+
+#message {
+  margin-top: 20px;
+  font-size: 1.5em;
+  color: #0f0;
+  min-height: 2em;
+}
