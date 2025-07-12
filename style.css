@@ -1,0 +1,482 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+    overflow-x: hidden;
+}
+
+.game-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header Styles */
+.game-header {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.game-header h1 {
+    text-align: center;
+    font-size: 2.5em;
+    color: #4a4a4a;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+    color: white;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #4ecdc4, #44a08d);
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.difficulty-select {
+    padding: 12px 20px;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    font-size: 16px;
+    background: white;
+    cursor: pointer;
+}
+
+/* Game Area */
+.game-area {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.reference-container {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.reference-container h3 {
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    color: #4a4a4a;
+}
+
+.reference-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+
+/* Ninja Coffee Cup Character */
+.ninja-cup-reference {
+    width: 200px;
+    height: 280px;
+    position: relative;
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 120px;
+}
+
+.ninja-cup-reference::before {
+    content: '🥷☕';
+    position: absolute;
+    font-size: 120px;
+    z-index: 1;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+/* Alternative CSS Art Version */
+.ninja-cup-art {
+    width: 200px;
+    height: 280px;
+    position: relative;
+    margin: 20px auto;
+}
+
+/* Coffee Cup Body */
+.ninja-cup-art::before {
+    content: '';
+    position: absolute;
+    width: 120px;
+    height: 160px;
+    background: linear-gradient(to bottom, #8B4513 0%, #DEB887 50%, #F5DEB3 100%);
+    border-radius: 15px 15px 25px 25px;
+    top: 80px;
+    left: 40px;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Coffee Cup Lid */
+.ninja-cup-art::after {
+    content: '';
+    position: absolute;
+    width: 140px;
+    height: 20px;
+    background: linear-gradient(to bottom, #4a4a4a, #333);
+    border-radius: 50px;
+    top: 70px;
+    left: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Ninja Headband */
+.ninja-headband {
+    position: absolute;
+    background: linear-gradient(90deg, #2c3e50, #34495e);
+    border-radius: 50px;
+    width: 180px;
+    height: 40px;
+    top: 20px;
+    left: 10px;
+}
+
+/* Eyes */
+.ninja-eyes {
+    position: absolute;
+    top: 90px;
+    left: 50px;
+    width: 100px;
+    height: 40px;
+}
+
+.ninja-eyes::before,
+.ninja-eyes::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    background: white;
+    border-radius: 50%;
+    top: 0;
+}
+
+.ninja-eyes::before {
+    left: 15px;
+    box-shadow: inset 8px 8px 0 #333;
+}
+
+.ninja-eyes::after {
+    right: 15px;
+    box-shadow: inset -8px 8px 0 #333;
+}
+
+/* Face Mask */
+.ninja-mask {
+    position: absolute;
+    width: 100px;
+    height: 60px;
+    background: #1a1a1a;
+    top: 120px;
+    left: 50px;
+    border-radius: 0 0 50px 50px;
+}
+
+/* Headband Symbol */
+.ninja-symbol {
+    position: absolute;
+    width: 30px;
+    height: 20px;
+    background: #c0392b;
+    top: 30px;
+    left: 85px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ninja-symbol::before {
+    content: '🍃';
+    font-size: 12px;
+}
+
+/* Swords */
+.ninja-sword-left,
+.ninja-sword-right {
+    position: absolute;
+    width: 3px;
+    height: 60px;
+    background: linear-gradient(to bottom, #FFD700, #DAA520);
+    top: 180px;
+}
+
+.ninja-sword-left {
+    left: 20px;
+    transform: rotate(-15deg);
+}
+
+.ninja-sword-right {
+    right: 20px;
+    transform: rotate(15deg);
+}
+
+/* Puzzle Container */
+.puzzle-container {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.puzzle-grid {
+    display: grid;
+    gap: 2px;
+    background: #333;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+    aspect-ratio: 1;
+    max-width: 400px;
+}
+
+.puzzle-grid.size-3 { grid-template-columns: repeat(3, 1fr); }
+.puzzle-grid.size-4 { grid-template-columns: repeat(4, 1fr); }
+.puzzle-grid.size-5 { grid-template-columns: repeat(5, 1fr); }
+
+.puzzle-slot {
+    background: rgba(255, 255, 255, 0.3);
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.puzzle-slot.occupied {
+    border: 2px solid #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.puzzle-slot.drop-zone {
+    border-color: #2196F3;
+    background: rgba(33, 150, 243, 0.2);
+    transform: scale(1.05);
+}
+
+.pieces-container h3 {
+    margin-bottom: 15px;
+    color: #4a4a4a;
+}
+
+.puzzle-pieces {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+    background: rgba(240, 240, 240, 0.5);
+    border-radius: 10px;
+}
+
+.puzzle-piece {
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    cursor: grab;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.puzzle-piece:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.puzzle-piece.dragging {
+    cursor: grabbing;
+    opacity: 0.8;
+    z-index: 1000;
+}
+
+/* Game Stats */
+.game-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-label {
+    display: block;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #4a4a4a;
+}
+
+/* Congratulations Modal */
+.congratulations {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(5px);
+}
+
+.congratulations.hidden {
+    display: none;
+}
+
+.congrats-content {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    max-width: 400px;
+    animation: bounceIn 0.6s ease-out;
+}
+
+.congrats-content h2 {
+    font-size: 2.5em;
+    color: #4CAF50;
+    margin-bottom: 20px;
+}
+
+.congrats-content p {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    color: #666;
+}
+
+.celebration-ninja {
+    font-size: 3em;
+    margin: 20px 0;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .game-area {
+        grid-template-columns: 1fr;
+    }
+    
+    .game-header h1 {
+        font-size: 2em;
+    }
+    
+    .controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .game-stats {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .ninja-cup-reference {
+        transform: scale(0.8);
+    }
+}
+
+@media (max-width: 480px) {
+    .game-container {
+        padding: 10px;
+    }
+    
+    .puzzle-pieces {
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    }
+    
+    .ninja-cup-reference {
+        transform: scale(0.6);
+    }
+}
