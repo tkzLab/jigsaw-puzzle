@@ -166,9 +166,10 @@ body {
 
 .reference-container {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: transparent;
     border: none;
     border-radius: 0;
@@ -176,8 +177,6 @@ body {
     text-align: center;
     box-shadow: none;
     z-index: 1;
-    width: 100%;
-    height: 100%;
     pointer-events: none;
 }
 
@@ -188,20 +187,48 @@ body {
 }
 
 .reference-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 100%;
     opacity: 0.15;
 }
 
 .reference-image img {
-    width: 100% !important;
-    height: 100% !important;
+    width: calc(100% - 40px) !important;
+    height: calc(100% - 40px) !important;
     object-fit: contain;
     border: none !important;
     border-radius: 0 !important;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+/* Desktop size-specific adjustments for reference image */
+.puzzle-grid.size-3 .reference-image img {
+    width: calc(100% - 40px) !important;
+    height: calc(100% - 40px) !important;
+    top: 20px !important;
+    left: 20px !important;
+}
+
+.puzzle-grid.size-4 .reference-image img {
+    width: calc(100% - 40px) !important;
+    height: calc(100% - 40px) !important;
+    top: 20px !important;
+    left: 20px !important;
+}
+
+.puzzle-grid.size-5 .reference-image img {
+    width: calc(100% - 40px) !important;
+    height: calc(100% - 40px) !important;
+    top: 20px !important;
+    left: 20px !important;
 }
 
 /* Ninja Coffee Cup Character */
@@ -406,6 +433,27 @@ body {
         gap: 2px;
         padding: 12px;
     }
+    
+    .reference-image img {
+        width: calc(100% - 30px) !important;
+        height: calc(100% - 30px) !important;
+        top: 15px !important;
+        left: 15px !important;
+    }
+    
+    .puzzle-grid.size-3 .reference-image img {
+        width: calc(100% - 36px) !important;
+        height: calc(100% - 36px) !important;
+        top: 18px !important;
+        left: 18px !important;
+    }
+    
+    .puzzle-grid.size-5 .reference-image img {
+        width: calc(100% - 24px) !important;
+        height: calc(100% - 24px) !important;
+        top: 12px !important;
+        left: 12px !important;
+    }
 }
 
 /* General mobile adjustments */
@@ -439,6 +487,27 @@ body {
         max-width: 320px;
         gap: 2px;
         padding: 12px;
+    }
+    
+    .reference-image img {
+        width: calc(100% - 30px) !important;
+        height: calc(100% - 30px) !important;
+        top: 15px !important;
+        left: 15px !important;
+    }
+    
+    .puzzle-grid.size-3 .reference-image img {
+        width: calc(100% - 36px) !important;
+        height: calc(100% - 36px) !important;
+        top: 18px !important;
+        left: 18px !important;
+    }
+    
+    .puzzle-grid.size-5 .reference-image img {
+        width: calc(100% - 24px) !important;
+        height: calc(100% - 24px) !important;
+        top: 12px !important;
+        left: 12px !important;
     }
 }
 
