@@ -6,15 +6,123 @@ class NinjaPuzzleGame {
         this.startTime = null;
         this.timerInterval = null;
         this.gameCompleted = false;
+        this.puzzleImage = null;
+        this.imageLoaded = false;
         
-        this.initializeGame();
-        this.setupEventListeners();
+        this.createDefaultImage();
+    }
+    
+    createDefaultImage() {
+        // Create a canvas with a default ninja coffee cup image
+        const canvas = document.createElement('canvas');
+        canvas.width = 300;
+        canvas.height = 300;
+        const ctx = canvas.getContext('2d');
+        
+        // Draw a colorful default image
+        this.drawDefaultImage(ctx, canvas.width, canvas.height);
+        
+        // Convert canvas to image
+        this.puzzleImage = new Image();
+        this.puzzleImage.onload = () => {
+            this.imageLoaded = true;
+            this.initializeGame();
+            this.setupEventListeners();
+        };
+        this.puzzleImage.src = canvas.toDataURL();
+    }
+    
+    drawDefaultImage(ctx, width, height) {
+        // Clear canvas
+        ctx.fillStyle = '#87CEEB';
+        ctx.fillRect(0, 0, width, height);
+        
+        // Draw background gradient
+        const gradient = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, width/2);
+        gradient.addColorStop(0, '#FFE4B5');
+        gradient.addColorStop(1, '#DEB887');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+        
+        // Draw coffee cup body
+        ctx.fillStyle = '#8B4513';
+        ctx.fillRect(width*0.3, height*0.4, width*0.4, height*0.45);
+        
+        // Draw coffee inside cup
+        ctx.fillStyle = '#2F1B14';
+        ctx.fillRect(width*0.32, height*0.42, width*0.36, height*0.35);
+        
+        // Draw coffee foam
+        ctx.fillStyle = '#F5DEB3';
+        ctx.beginPath();
+        ctx.ellipse(width*0.5, height*0.45, width*0.16, height*0.08, 0, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Draw cup handle
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.arc(width*0.75, height*0.6, width*0.08, Math.PI * 0.3, Math.PI * 1.7, false);
+        ctx.stroke();
+        
+        // Draw ninja mask
+        ctx.fillStyle = '#2C3E50';
+        ctx.beginPath();
+        ctx.ellipse(width*0.5, height*0.25, width*0.25, height*0.12, 0, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Draw ninja eyes
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.ellipse(width*0.42, height*0.25, width*0.04, height*0.06, 0, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(width*0.58, height*0.25, width*0.04, height*0.06, 0, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Draw ninja eye pupils
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.ellipse(width*0.42, height*0.25, width*0.02, height*0.03, 0, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(width*0.58, height*0.25, width*0.02, height*0.03, 0, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Draw decorative stars
+        this.drawStar(ctx, width*0.15, height*0.15, 5, width*0.03, width*0.015, '#FFD700');
+        this.drawStar(ctx, width*0.85, height*0.2, 5, width*0.025, width*0.0125, '#FFD700');
+        this.drawStar(ctx, width*0.2, height*0.8, 5, width*0.02, width*0.01, '#FFD700');
+        this.drawStar(ctx, width*0.8, height*0.85, 5, width*0.025, width*0.0125, '#FFD700');
+    }
+    
+    drawStar(ctx, x, y, spikes, outerRadius, innerRadius, color) {
+        let rot = Math.PI / 2 * 3;
+        let step = Math.PI / spikes;
+        
+        ctx.beginPath();
+        ctx.moveTo(x, y - outerRadius);
+        
+        for (let i = 0; i < spikes; i++) {
+            ctx.lineTo(x + Math.cos(rot) * outerRadius, y + Math.sin(rot) * outerRadius);
+            rot += step;
+            ctx.lineTo(x + Math.cos(rot) * innerRadius, y + Math.sin(rot) * innerRadius);
+            rot += step;
+        }
+        
+        ctx.lineTo(x, y - outerRadius);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
     }
     
     initializeGame() {
+        if (!this.imageLoaded) return;
+        
         this.generatePuzzleData();
         this.createPuzzleGrid();
         this.createPuzzlePieces();
+        this.createReferenceImage();
         this.resetTimer();
     }
     
@@ -66,15 +174,58 @@ class NinjaPuzzleGame {
                 correctPosition: i,
                 currentPosition: null,
                 isPlaced: false,
-                content: this.getPieceContent(i)
+                imageData: null
             });
+        }
+        this.generatePieceImages();
+    }
+    
+    generatePieceImages() {
+        if (!this.puzzleImage) return;
+        
+        const pieceWidth = this.puzzleImage.width / this.gridSize;
+        const pieceHeight = this.puzzleImage.height / this.gridSize;
+        
+        for (let i = 0; i < this.puzzleData.length; i++) {
+            const row = Math.floor(i / this.gridSize);
+            const col = i % this.gridSize;
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = pieceWidth;
+            canvas.height = pieceHeight;
+            const ctx = canvas.getContext('2d');
+            
+            // Draw the piece from the original image
+            ctx.drawImage(
+                this.puzzleImage,
+                col * pieceWidth, row * pieceHeight, pieceWidth, pieceHeight,
+                0, 0, pieceWidth, pieceHeight
+            );
+            
+            // Add border to make pieces more visible
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(1, 1, pieceWidth - 2, pieceHeight - 2);
+            
+            this.puzzleData[i].imageData = canvas.toDataURL();
         }
     }
     
-    getPieceContent(index) {
-        // Generate different ninja-themed emojis for each piece
-        const ninjaEmojis = ['🥷', '☕', '⚔️', '🍃', '🌟', '💫', '🎯', '🔥', '⚡', '🌙', '✨', '🎪', '🎨', '🎭', '🎪', '🎸', '🎺', '🎻', '🎹', '🎵', '🎶', '🎤', '🎧', '🎬', '🎮'];
-        return ninjaEmojis[index % ninjaEmojis.length];
+    createReferenceImage() {
+        const referenceContainer = document.querySelector('.ninja-cup-reference');
+        referenceContainer.innerHTML = '';
+        referenceContainer.className = 'ninja-cup-reference';
+        
+        const img = document.createElement('img');
+        img.src = this.puzzleImage.src;
+        img.className = 'reference-image-display';
+        img.style.width = '200px';
+        img.style.height = '200px';
+        img.style.objectFit = 'contain';
+        img.style.border = '2px solid #333';
+        img.style.borderRadius = '10px';
+        
+        referenceContainer.appendChild(img);
     }
     
     createPuzzleGrid() {
@@ -94,9 +245,6 @@ class NinjaPuzzleGame {
         const piecesContainer = document.getElementById('puzzlePieces');
         piecesContainer.innerHTML = '';
         
-        // Create reference grid to show the correct solution
-        this.createReferenceGrid();
-        
         // Shuffle pieces for initial placement
         const shuffledPieces = [...this.puzzleData].sort(() => Math.random() - 0.5);
         
@@ -105,24 +253,21 @@ class NinjaPuzzleGame {
             pieceElement.className = 'puzzle-piece';
             pieceElement.draggable = true;
             pieceElement.dataset.pieceId = piece.id;
-            pieceElement.textContent = piece.content;
+            
+            // Create image element for the piece
+            const img = document.createElement('img');
+            img.src = piece.imageData;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.pointerEvents = 'none'; // Prevent image from interfering with drag
+            
+            pieceElement.appendChild(img);
             piecesContainer.appendChild(pieceElement);
         });
     }
     
-    createReferenceGrid() {
-        const referenceContainer = document.querySelector('.ninja-cup-reference');
-        referenceContainer.innerHTML = '';
-        referenceContainer.className = `ninja-cup-reference reference-grid size-${this.gridSize}`;
-        
-        // Create reference grid with correct pieces
-        for (let i = 0; i < this.gridSize * this.gridSize; i++) {
-            const refPiece = document.createElement('div');
-            refPiece.className = 'reference-piece';
-            refPiece.textContent = this.puzzleData[i].content;
-            referenceContainer.appendChild(refPiece);
-        }
-    }
+
     
     setupDragAndDrop() {
         let draggedElement = null;
