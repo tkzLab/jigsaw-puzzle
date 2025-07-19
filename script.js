@@ -1,771 +1,96 @@
-class NinjaPuzzleGame {
+// Constants for the game
+const DIFFICULTIES = {
+    easy: { gridSize: 3, name: 'かんたん' },
+    medium: { gridSize: 4, name: 'ふつう' },
+    hard: { gridSize: 5, name: 'むずかしい' },
+};
+
+const IMAGE_SIZE = 300; // The size of the puzzle image
+
+class PuzzleUI {
     constructor() {
-        this.currentDifficulty = 'easy';
-        this.gridSize = 3;
-        this.puzzleData = [];
-        this.gameCompleted = false;
-        this.puzzleImage = null;
-        this.imageLoaded = false;
-        
-        this.createDefaultImage();
-    }
-    
-    createDefaultImage() {
-        // Create a canvas with a default ninja coffee cup image
-        const canvas = document.createElement('canvas');
-        canvas.width = 300;
-        canvas.height = 300;
-        const ctx = canvas.getContext('2d');
-        
-        // Draw a colorful default image
-        this.drawDefaultImage(ctx, canvas.width, canvas.height);
-        
-        // Convert canvas to image
-        this.puzzleImage = new Image();
-        this.puzzleImage.onload = () => {
-            this.imageLoaded = true;
-            this.initializeGame();
-            this.setupEventListeners();
+        this.elements = {
+            puzzleGrid: document.getElementById('puzzleGrid'),
+            piecesContainer: document.getElementById('puzzlePieces'),
+            referenceImageContainer: document.querySelector('.reference-image'),
+            congratulations: document.getElementById('congratulations'),
         };
-        this.puzzleImage.src = canvas.toDataURL();
+        this.dragPreview = null;
     }
-    
-    drawDefaultImage(ctx, width, height) {
-        // Clear canvas
-        ctx.fillStyle = '#87CEEB';
-        ctx.fillRect(0, 0, width, height);
-        
-        // Draw background gradient
-        const gradient = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, width/2);
-        gradient.addColorStop(0, '#FFE4B5');
-        gradient.addColorStop(1, '#DEB887');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, width, height);
-        
-        // Draw coffee cup body
-        ctx.fillStyle = '#8B4513';
-        ctx.fillRect(width*0.3, height*0.4, width*0.4, height*0.45);
-        
-        // Draw coffee inside cup
-        ctx.fillStyle = '#2F1B14';
-        ctx.fillRect(width*0.32, height*0.42, width*0.36, height*0.35);
-        
-        // Draw coffee foam
-        ctx.fillStyle = '#F5DEB3';
-        ctx.beginPath();
-        ctx.ellipse(width*0.5, height*0.45, width*0.16, height*0.08, 0, 0, 2 * Math.PI);
-        ctx.fill();
-        
-        // Draw cup handle
-        ctx.strokeStyle = '#8B4513';
-        ctx.lineWidth = 8;
-        ctx.beginPath();
-        ctx.arc(width*0.75, height*0.6, width*0.08, Math.PI * 0.3, Math.PI * 1.7, false);
-        ctx.stroke();
-        
-        // Draw ninja mask
-        ctx.fillStyle = '#2C3E50';
-        ctx.beginPath();
-        ctx.ellipse(width*0.5, height*0.25, width*0.25, height*0.12, 0, 0, 2 * Math.PI);
-        ctx.fill();
-        
-        // Draw ninja eyes
-        ctx.fillStyle = '#FFFFFF';
-        ctx.beginPath();
-        ctx.ellipse(width*0.42, height*0.25, width*0.04, height*0.06, 0, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.ellipse(width*0.58, height*0.25, width*0.04, height*0.06, 0, 0, 2 * Math.PI);
-        ctx.fill();
-        
-        // Draw ninja eye pupils
-        ctx.fillStyle = '#000000';
-        ctx.beginPath();
-        ctx.ellipse(width*0.42, height*0.25, width*0.02, height*0.03, 0, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.ellipse(width*0.58, height*0.25, width*0.02, height*0.03, 0, 0, 2 * Math.PI);
-        ctx.fill();
-        
-        // Draw decorative stars
-        this.drawStar(ctx, width*0.15, height*0.15, 5, width*0.03, width*0.015, '#FFD700');
-        this.drawStar(ctx, width*0.85, height*0.2, 5, width*0.025, width*0.0125, '#FFD700');
-        this.drawStar(ctx, width*0.2, height*0.8, 5, width*0.02, width*0.01, '#FFD700');
-        this.drawStar(ctx, width*0.8, height*0.85, 5, width*0.025, width*0.0125, '#FFD700');
-    }
-    
-    drawStar(ctx, x, y, spikes, outerRadius, innerRadius, color) {
-        let rot = Math.PI / 2 * 3;
-        let step = Math.PI / spikes;
-        
-        ctx.beginPath();
-        ctx.moveTo(x, y - outerRadius);
-        
-        for (let i = 0; i < spikes; i++) {
-            ctx.lineTo(x + Math.cos(rot) * outerRadius, y + Math.sin(rot) * outerRadius);
-            rot += step;
-            ctx.lineTo(x + Math.cos(rot) * innerRadius, y + Math.sin(rot) * innerRadius);
-            rot += step;
-        }
-        
-        ctx.lineTo(x, y - outerRadius);
-        ctx.closePath();
-        ctx.fillStyle = color;
-        ctx.fill();
-    }
-    
-    initializeGame() {
-        if (!this.imageLoaded) return;
-        
-        this.generatePuzzleData();
-        this.createPuzzleGrid();
-        this.createPuzzlePieces();
-        this.createReferenceImage();
-    }
-    
-    setupEventListeners() {
-        // Difficulty selector
-        document.getElementById('difficulty').addEventListener('change', (e) => {
-            this.currentDifficulty = e.target.value;
-            this.setGridSize();
-            this.resetGame();
-        });
-        
-        // Control buttons
-        document.getElementById('shuffleBtn').addEventListener('click', () => {
-            this.shufflePieces();
-        });
-        
-        document.getElementById('resetBtn').addEventListener('click', () => {
-            this.resetGame();
-        });
-        
-        document.getElementById('playAgainBtn').addEventListener('click', () => {
-            this.resetGame();
-            this.hideCongratulations();
-        });
-        
-        // Initialize drag and drop
-        this.setupDragAndDrop();
-    }
-    
-    setGridSize() {
-        switch(this.currentDifficulty) {
-            case 'easy':
-                this.gridSize = 3;
-                break;
-            case 'medium':
-                this.gridSize = 4;
-                break;
-            case 'hard':
-                this.gridSize = 5;
-                break;
-        }
-    }
-    
-    generatePuzzleData() {
-        this.puzzleData = [];
-        for (let i = 0; i < this.gridSize * this.gridSize; i++) {
-            this.puzzleData.push({
-                id: i,
-                correctPosition: i,
-                currentPosition: null,
-                isPlaced: false,
-                imageData: null
-            });
-        }
-        this.generatePieceImages();
-    }
-    
-    generatePieceImages() {
-        if (!this.puzzleImage) return;
-        
-        const pieceWidth = this.puzzleImage.width / this.gridSize;
-        const pieceHeight = this.puzzleImage.height / this.gridSize;
-        
-        for (let i = 0; i < this.puzzleData.length; i++) {
-            const row = Math.floor(i / this.gridSize);
-            const col = i % this.gridSize;
-            
-            const canvas = document.createElement('canvas');
-            canvas.width = pieceWidth + 20; // Reduced extra space for tabs
-            canvas.height = pieceHeight + 20;
-            const ctx = canvas.getContext('2d');
-            
-            // Create puzzle piece shape with tabs
-            this.createPuzzlePieceShape(ctx, canvas.width, canvas.height, row, col);
-            
-            // Clip and draw the image
-            ctx.clip();
-            ctx.drawImage(
-                this.puzzleImage,
-                col * pieceWidth, row * pieceHeight, pieceWidth, pieceHeight,
-                10, 10, pieceWidth, pieceHeight
-            );
-            
-            this.puzzleData[i].imageData = canvas.toDataURL();
-            this.puzzleData[i].clipPath = this.generateClipPath(row, col);
-        }
-    }
-    
-    createPuzzlePieceShape(ctx, width, height, row, col) {
-        const centerX = width / 2;
-        const centerY = height / 2;
-        const tabSize = 8;
-        const pieceWidth = width - 20;
-        const pieceHeight = height - 20;
-        
-        ctx.beginPath();
-        
-        // Start from top-left
-        ctx.moveTo(10, 10);
-        
-        // Top edge with potential tab
-        if (row === 0) {
-            // Top edge - no tab
-            ctx.lineTo(width - 10, 10);
-        } else {
-            // Top edge with tab
-            const hasTab = (row + col) % 2 === 0;
-            ctx.lineTo(centerX - tabSize, 10);
-            if (hasTab) {
-                ctx.arc(centerX, 10, tabSize, Math.PI, 0, false);
-            } else {
-                ctx.arc(centerX, 10, tabSize, 0, Math.PI, false);
-            }
-            ctx.lineTo(width - 10, 10);
-        }
-        
-        // Right edge with potential tab
-        if (col === this.gridSize - 1) {
-            // Right edge - no tab
-            ctx.lineTo(width - 10, height - 10);
-        } else {
-            // Right edge with tab
-            const hasTab = (row + col + 1) % 2 === 0;
-            ctx.lineTo(width - 10, centerY - tabSize);
-            if (hasTab) {
-                ctx.arc(width - 10, centerY, tabSize, -Math.PI/2, Math.PI/2, false);
-            } else {
-                ctx.arc(width - 10, centerY, tabSize, Math.PI/2, -Math.PI/2, false);
-            }
-            ctx.lineTo(width - 10, height - 10);
-        }
-        
-        // Bottom edge with potential tab
-        if (row === this.gridSize - 1) {
-            // Bottom edge - no tab
-            ctx.lineTo(10, height - 10);
-        } else {
-            // Bottom edge with tab
-            const hasTab = (row + col + 2) % 2 === 0;
-            ctx.lineTo(centerX + tabSize, height - 10);
-            if (hasTab) {
-                ctx.arc(centerX, height - 10, tabSize, 0, Math.PI, false);
-            } else {
-                ctx.arc(centerX, height - 10, tabSize, Math.PI, 0, false);
-            }
-            ctx.lineTo(10, height - 10);
-        }
-        
-        // Left edge with potential tab
-        if (col === 0) {
-            // Left edge - no tab
-            ctx.lineTo(10, 10);
-        } else {
-            // Left edge with tab
-            const hasTab = (row + col + 3) % 2 === 0;
-            ctx.lineTo(10, centerY + tabSize);
-            if (hasTab) {
-                ctx.arc(10, centerY, tabSize, Math.PI/2, -Math.PI/2, false);
-            } else {
-                ctx.arc(10, centerY, tabSize, -Math.PI/2, Math.PI/2, false);
-            }
-            ctx.lineTo(10, 10);
-        }
-        
-        ctx.closePath();
-    }
-    
-    generateClipPath(row, col) {
-        // Generate CSS clip-path for puzzle piece shape
-        const centerX = 50;
-        const centerY = 50;
-        const tabSize = 7;
-        
-        let path = `polygon(`;
-        let points = [];
-        
-        // Top edge
-        if (row === 0) {
-            points.push(`10% 10%`, `90% 10%`);
-        } else {
-            const hasTab = (row + col) % 2 === 0;
-            points.push(`10% 10%`, `${centerX - tabSize}% 10%`);
-            if (hasTab) {
-                points.push(`${centerX - tabSize}% 5%`, `${centerX + tabSize}% 5%`);
-            } else {
-                points.push(`${centerX - tabSize}% 15%`, `${centerX + tabSize}% 15%`);
-            }
-            points.push(`${centerX + tabSize}% 10%`, `90% 10%`);
-        }
-        
-        // Right edge
-        if (col === this.gridSize - 1) {
-            points.push(`90% 90%`);
-        } else {
-            const hasTab = (row + col + 1) % 2 === 0;
-            points.push(`90% ${centerY - tabSize}%`);
-            if (hasTab) {
-                points.push(`95% ${centerY - tabSize}%`, `95% ${centerY + tabSize}%`);
-            } else {
-                points.push(`85% ${centerY - tabSize}%`, `85% ${centerY + tabSize}%`);
-            }
-            points.push(`90% ${centerY + tabSize}%`, `90% 90%`);
-        }
-        
-        // Bottom edge
-        if (row === this.gridSize - 1) {
-            points.push(`10% 90%`);
-        } else {
-            const hasTab = (row + col + 2) % 2 === 0;
-            points.push(`${centerX + tabSize}% 90%`);
-            if (hasTab) {
-                points.push(`${centerX + tabSize}% 95%`, `${centerX - tabSize}% 95%`);
-            } else {
-                points.push(`${centerX + tabSize}% 85%`, `${centerX - tabSize}% 85%`);
-            }
-            points.push(`${centerX - tabSize}% 90%`, `10% 90%`);
-        }
-        
-        // Left edge
-        if (col === 0) {
-            points.push(`10% 10%`);
-        } else {
-            const hasTab = (row + col + 3) % 2 === 0;
-            points.push(`10% ${centerY + tabSize}%`);
-            if (hasTab) {
-                points.push(`5% ${centerY + tabSize}%`, `5% ${centerY - tabSize}%`);
-            } else {
-                points.push(`15% ${centerY + tabSize}%`, `15% ${centerY - tabSize}%`);
-            }
-            points.push(`10% ${centerY - tabSize}%`, `10% 10%`);
-        }
-        
-        return `polygon(${points.join(', ')})`;
-    }
-    
-    createReferenceImage() {
-        const referenceImageDiv = document.querySelector('.reference-image');
-        if (!referenceImageDiv) return;
-        
-        referenceImageDiv.innerHTML = '';
-        
+
+    createReferenceImage(imageSrc) {
+        if (!this.elements.referenceImageContainer) return;
+        this.elements.referenceImageContainer.innerHTML = '';
         const img = document.createElement('img');
-        img.src = this.puzzleImage.src;
+        img.src = imageSrc;
         img.className = 'reference-image-display';
-        
-        referenceImageDiv.appendChild(img);
+        this.elements.referenceImageContainer.appendChild(img);
     }
-    
-    createPuzzleGrid() {
-        const puzzleGrid = document.getElementById('puzzleGrid');
-        
-        // 見本コンテナを保持
-        const referenceContainer = puzzleGrid.querySelector('.reference-container');
-        
-        puzzleGrid.innerHTML = '';
-        puzzleGrid.className = `puzzle-grid size-${this.gridSize}`;
-        
-        // 見本コンテナを復元
+
+    createPuzzleGrid(gridSize) {
+        const referenceContainer = this.elements.puzzleGrid.querySelector('.reference-container');
+        this.elements.puzzleGrid.innerHTML = '';
+        this.elements.puzzleGrid.className = `puzzle-grid size-${gridSize}`;
         if (referenceContainer) {
-            puzzleGrid.appendChild(referenceContainer);
+            this.elements.puzzleGrid.appendChild(referenceContainer);
         }
-        
-        for (let i = 0; i < this.gridSize * this.gridSize; i++) {
+        for (let i = 0; i < gridSize * gridSize; i++) {
             const slot = document.createElement('div');
             slot.className = 'puzzle-slot';
             slot.dataset.position = i;
-            puzzleGrid.appendChild(slot);
+            this.elements.puzzleGrid.appendChild(slot);
         }
-        
-        // 全スロットの状態をリセット
     }
-    
-    createPuzzlePieces() {
-        const piecesContainer = document.getElementById('puzzlePieces');
-        piecesContainer.innerHTML = '';
-        
-        // Shuffle pieces for initial placement
-        const shuffledPieces = [...this.puzzleData].sort(() => Math.random() - 0.5);
-        
+
+    createPuzzlePieces(puzzleData) {
+        this.elements.piecesContainer.innerHTML = '';
+        const shuffledPieces = [...puzzleData].sort(() => Math.random() - 0.5);
         shuffledPieces.forEach(piece => {
             const pieceElement = document.createElement('div');
             pieceElement.className = 'puzzle-piece';
             pieceElement.draggable = true;
             pieceElement.dataset.pieceId = piece.id;
-            
-            // パーツの初期位置を明確にリセット
-            piece.currentPosition = null;
-            piece.isPlaced = false;
-            
-            // Create image element for the piece
             const img = document.createElement('img');
             img.src = piece.imageData;
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'cover';
-            img.style.pointerEvents = 'none'; // Prevent image from interfering with drag
-            
-            // Apply puzzle piece shape
-            pieceElement.style.clipPath = piece.clipPath || 'none';
-            
+            Object.assign(img.style, {
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                pointerEvents: 'none',
+            });
             pieceElement.appendChild(img);
-            piecesContainer.appendChild(pieceElement);
+            this.elements.piecesContainer.appendChild(pieceElement);
         });
     }
-    
 
-    
-    setupDragAndDrop() {
-        let draggedElement = null;
-        
-        // Drag start
-        document.addEventListener('dragstart', (e) => {
-            if (e.target.classList.contains('puzzle-piece')) {
-                draggedElement = e.target;
-                e.target.classList.add('dragging');
-            }
-        });
-        
-        // Drag end
-        document.addEventListener('dragend', (e) => {
-            if (e.target.classList.contains('puzzle-piece')) {
-                this.resetPieceStyles(e.target);
-                draggedElement = null;
-            }
-        });
-        
-        // Drag over
-        document.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            if (e.target.classList.contains('puzzle-slot')) {
-                e.target.classList.add('drop-zone');
-            }
-        });
-        
-        // Drag leave
-        document.addEventListener('dragleave', (e) => {
-            if (e.target.classList.contains('puzzle-slot')) {
-                e.target.classList.remove('drop-zone');
-            }
-        });
-        
-        // Drop
-        document.addEventListener('drop', (e) => {
-            e.preventDefault();
-            if (e.target.classList.contains('puzzle-slot') && draggedElement) {
-                this.handlePieceDrop(draggedElement, e.target);
-                e.target.classList.remove('drop-zone');
-            }
-        });
-        
-        // Touch events for mobile support
-        this.setupTouchEvents();
-    }
-    
-    setupTouchEvents() {
-        let touchedPiece = null;
-        let initialTouch = null;
-        let dragPreview = null;
-        
-        document.addEventListener('touchstart', (e) => {
-            if (e.target.classList.contains('puzzle-piece') || e.target.parentElement.classList.contains('puzzle-piece')) {
-                const piece = e.target.classList.contains('puzzle-piece') ? e.target : e.target.parentElement;
-                touchedPiece = piece;
-                initialTouch = e.touches[0];
-                
-                piece.classList.add('dragging');
-                
-                // Create visual feedback for mobile
-                this.createTouchFeedback(piece, initialTouch);
-                
-                e.preventDefault();
-            }
-        }, { passive: false });
-        
-        document.addEventListener('touchmove', (e) => {
-            if (touchedPiece && initialTouch) {
-                e.preventDefault();
-                
-                const touch = e.touches[0];
-                
-                // Update drag preview position
-                if (dragPreview) {
-                    dragPreview.style.left = (touch.clientX - 40) + 'px';
-                    dragPreview.style.top = (touch.clientY - 40) + 'px';
-                }
-                
-                // Highlight potential drop zones
-                const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-                this.updateDropZoneHighlight(elementBelow);
-            }
-        }, { passive: false });
-        
-        document.addEventListener('touchend', (e) => {
-            if (touchedPiece) {
-                e.preventDefault();
-                const touch = e.changedTouches[0];
-                const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-                
-                if (elementBelow && elementBelow.classList.contains('puzzle-slot')) {
-                    this.handlePieceDrop(touchedPiece, elementBelow);
-                }
-                
-                // Comprehensive cleanup using unified method
-                this.resetPieceStyles(touchedPiece);
-                this.removeTouchFeedback();
-                this.clearDropZoneHighlights();
-                
-                // Reset variables
-                touchedPiece = null;
-                initialTouch = null;
-                dragPreview = null;
-                
-                // Additional cleanup after a short delay
-                setTimeout(() => {
-                    document.querySelectorAll('.puzzle-piece').forEach(piece => {
-                        if (!piece.parentElement.classList.contains('puzzle-slot')) {
-                            this.resetPieceStyles(piece);
-                        }
-                    });
-                }, 100);
-            }
-        });
-    }
-    
-    createTouchFeedback(piece, touch) {
-        // Create a visual preview that follows the finger
-        const preview = piece.cloneNode(true);
-        preview.classList.add('touch-preview');
-        preview.style.position = 'fixed';
-        preview.style.left = (touch.clientX - 40) + 'px';
-        preview.style.top = (touch.clientY - 40) + 'px';
-        preview.style.width = '80px';
-        preview.style.height = '80px';
-        preview.style.zIndex = '2000';
-        preview.style.opacity = '0.8';
-        preview.style.pointerEvents = 'none';
-        preview.style.transform = 'scale(1.1)';
-        preview.style.borderRadius = '12px';
-        preview.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.4)';
-        
-        document.body.appendChild(preview);
-        dragPreview = preview;
-    }
-    
-    removeTouchFeedback() {
-        if (dragPreview) {
-            dragPreview.remove();
-            dragPreview = null;
-        }
-        
-        // Remove any remaining dragging classes and reset styles
-        document.querySelectorAll('.puzzle-piece.dragging').forEach(piece => {
-            piece.classList.remove('dragging');
-            // Reset all transform and opacity properties
-            piece.style.transform = '';
-            piece.style.opacity = '';
-            piece.style.zIndex = '';
-            piece.style.position = '';
-            piece.style.left = '';
-            piece.style.top = '';
-        });
-        
-        // Clear any lingering touch effects
-        document.querySelectorAll('.puzzle-piece').forEach(piece => {
-            piece.style.transform = '';
-            piece.style.opacity = '';
-            piece.style.zIndex = '';
-        });
-        
-        // Force complete redraw
-        requestAnimationFrame(() => {
-            document.body.style.display = 'none';
-            document.body.offsetHeight; // Trigger reflow
-            document.body.style.display = '';
-        });
-    }
-    
-    updateDropZoneHighlight(element) {
-        // Clear previous highlights
-        this.clearDropZoneHighlights();
-        
-        // Highlight current drop zone
-        if (element && element.classList.contains('puzzle-slot')) {
-            element.classList.add('touch-drop-zone');
-        }
-    }
-    
-    clearDropZoneHighlights() {
-        document.querySelectorAll('.touch-drop-zone').forEach(slot => {
-            slot.classList.remove('touch-drop-zone');
-        });
-    }
-    
-    resetPieceStyles(piece) {
-        // 段階的にスタイルをリセット
-        piece.classList.remove('dragging');
-        
-        // 即座にインラインスタイルをクリア
-        piece.style.transform = '';
-        piece.style.opacity = '';
-        piece.style.zIndex = '';
-        piece.style.position = '';
-        piece.style.pointerEvents = '';
-        piece.style.willChange = '';
-        piece.style.transition = '';
-        
-        // 強制的にブラウザに再描画を促す
-        piece.offsetHeight; // Force reflow
-        
-        // 追加の遅延クリーンアップ
-        requestAnimationFrame(() => {
-            piece.style.cssText = piece.style.cssText.replace(/transform[^;]*;?/g, '');
-            piece.style.cssText = piece.style.cssText.replace(/opacity[^;]*;?/g, '');
-            
-            // 最終的な強制再描画
-            piece.offsetHeight; // Force reflow again
-        });
-    }
-    
-    handlePieceDrop(pieceElement, slotElement) {
-        const pieceId = parseInt(pieceElement.dataset.pieceId);
-        const slotPosition = parseInt(slotElement.dataset.position);
-        
-        // パーツの元の位置を取得してクリーンアップ
-        const currentPosition = this.puzzleData[pieceId].currentPosition;
-        
-        if (currentPosition !== null) {
-            // 元のスロットから占有状態を削除
-            const oldSlot = document.querySelector(`[data-position="${currentPosition}"]`);
-            if (oldSlot) {
-                // 元のスロットからパーツも物理的に削除
-                const oldPiece = oldSlot.querySelector('.puzzle-piece');
-                if (oldPiece && oldPiece !== pieceElement) {
-                    oldPiece.remove();
-                }
-                oldSlot.classList.remove('occupied');
-                oldSlot.innerHTML = ''; // 完全にクリア
-            }
-        }
-        
-        // ドロップ先のスロットが既に占有されている場合の処理
-        if (slotElement.classList.contains('occupied')) {
-            // 既存のパーツをピースコンテナに戻す（移動ではなくコピー防止）
-            const existingPiece = slotElement.querySelector('.puzzle-piece');
-            if (existingPiece) {
-                const existingPieceId = parseInt(existingPiece.dataset.pieceId);
-                // 既存パーツは元の場所に戻さず、ピースコンテナに留める
-                document.getElementById('puzzlePieces').appendChild(existingPiece);
-                this.puzzleData[existingPieceId].currentPosition = null;
-                this.puzzleData[existingPieceId].isPlaced = false;
-            }
-        }
-        
-        // 新しいパーツを配置
-        slotElement.innerHTML = '';
-        slotElement.appendChild(pieceElement);
-        slotElement.classList.add('occupied');
-        
-        // パズルデータを更新
-        this.puzzleData[pieceId].currentPosition = slotPosition;
-        this.puzzleData[pieceId].isPlaced = true;
-        
-        // 正解配置時の視覚効果を完全削除
-        
-        // Check for game completion
-        if (this.checkWinCondition()) {
-            this.gameCompleted = true;
-            this.showCongratulations();
-        }
-    }
-    
-    // showCorrectPlacementEffect メソッドを完全削除
-    
-    checkWinCondition() {
-        return this.puzzleData.every(piece => 
-            piece.isPlaced && piece.currentPosition === piece.correctPosition
-        );
-    }
-    
-    shufflePieces() {
-        const piecesContainer = document.getElementById('puzzlePieces');
-        const pieces = Array.from(piecesContainer.children);
-        
-        // Move all pieces back to pieces container
-        document.querySelectorAll('.puzzle-slot').forEach(slot => {
-            const piece = slot.querySelector('.puzzle-piece');
-            if (piece) {
-                piecesContainer.appendChild(piece);
-                const pieceId = parseInt(piece.dataset.pieceId);
-                this.puzzleData[pieceId].currentPosition = null;
-                this.puzzleData[pieceId].isPlaced = false;
-            }
-            slot.classList.remove('occupied');
-            slot.innerHTML = '';
-        });
-        
-        // Shuffle pieces
-        const shuffled = pieces.sort(() => Math.random() - 0.5);
-        shuffled.forEach(piece => piecesContainer.appendChild(piece));
-    }
-    
-    resetGame() {
-        this.gameCompleted = false;
-        this.setGridSize();
-        this.generatePuzzleData();
-        this.createPuzzleGrid();
-        this.createPuzzlePieces();
-        this.hideCongratulations();
-    }
-    
     showCongratulations() {
-        document.getElementById('congratulations').classList.remove('hidden');
-        
-        // Add celebration effects
+        this.elements.congratulations.classList.remove('hidden');
         this.createCelebrationEffects();
     }
-    
+
     hideCongratulations() {
-        document.getElementById('congratulations').classList.add('hidden');
+        this.elements.congratulations.classList.add('hidden');
     }
-    
+
     createCelebrationEffects() {
-        // Create floating emojis
         const emojis = ['🎉', '🎊', '✨', '🌟', '🎈', '🎁'];
-        
         for (let i = 0; i < 20; i++) {
             setTimeout(() => {
                 const emoji = document.createElement('div');
                 emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-                emoji.style.position = 'fixed';
-                emoji.style.fontSize = '24px';
-                emoji.style.left = Math.random() * window.innerWidth + 'px';
-                emoji.style.top = '-50px';
-                emoji.style.zIndex = '3000';
-                emoji.style.pointerEvents = 'none';
-                emoji.style.animation = 'fall 3s linear forwards';
-                
+                Object.assign(emoji.style, {
+                    position: 'fixed',
+                    fontSize: '24px',
+                    left: `${Math.random() * window.innerWidth}px`,
+                    top: '-50px',
+                    zIndex: '3000',
+                    pointerEvents: 'none',
+                    animation: 'fall 3s linear forwards',
+                });
                 document.body.appendChild(emoji);
-                
-                setTimeout(() => {
-                    emoji.remove();
-                }, 3000);
+                setTimeout(() => emoji.remove(), 3000);
             }, i * 100);
         }
-        
-        // Add fall animation if not already present
         if (!document.querySelector('#fallAnimation')) {
             const style = document.createElement('style');
             style.id = 'fallAnimation';
@@ -775,45 +100,322 @@ class NinjaPuzzleGame {
                         transform: translateY(${window.innerHeight + 100}px) rotate(360deg);
                         opacity: 0;
                     }
-                }
-            `;
+                }`;
             document.head.appendChild(style);
         }
     }
+    
+    resetPieceStyles(piece) {
+        piece.classList.remove('dragging');
+        Object.assign(piece.style, {
+            transform: '',
+            opacity: '',
+            zIndex: '',
+            position: '',
+            pointerEvents: '',
+        });
+    }
+
+    createTouchFeedback(piece, touch) {
+        const preview = piece.cloneNode(true);
+        preview.classList.add('touch-preview');
+        Object.assign(preview.style, {
+            position: 'fixed',
+            left: `${touch.clientX - 40}px`,
+            top: `${touch.clientY - 40}px`,
+            width: '80px',
+            height: '80px',
+            zIndex: '2000',
+            opacity: '0.8',
+            pointerEvents: 'none',
+            transform: 'scale(1.1)',
+            borderRadius: '12px',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+        });
+        document.body.appendChild(preview);
+        this.dragPreview = preview;
+    }
+
+    removeTouchFeedback() {
+        if (this.dragPreview) {
+            this.dragPreview.remove();
+            this.dragPreview = null;
+        }
+        document.querySelectorAll('.puzzle-piece.dragging').forEach(p => p.classList.remove('dragging'));
+    }
+
+    updateDropZoneHighlight(element) {
+        this.clearDropZoneHighlights();
+        if (element && element.classList.contains('puzzle-slot')) {
+            element.classList.add('touch-drop-zone');
+        }
+    }
+
+    clearDropZoneHighlights() {
+        document.querySelectorAll('.touch-drop-zone').forEach(slot => slot.classList.remove('touch-drop-zone'));
+    }
 }
 
-// Initialize the game when the page loads
+class NinjaPuzzleGame {
+    constructor() {
+        this.ui = new PuzzleUI();
+        this.currentDifficulty = 'easy';
+        this.gridSize = DIFFICULTIES[this.currentDifficulty].gridSize;
+        this.puzzleData = [];
+        this.gameCompleted = false;
+        this.puzzleImage = null;
+        this.imageLoaded = false;
+        
+        this.createDefaultImage();
+    }
+    
+    createDefaultImage() {
+        this.puzzleImage = new Image();
+        this.puzzleImage.onload = () => {
+            this.imageLoaded = true;
+            this.initializeGame();
+            this.setupEventListeners();
+        };
+        this.puzzleImage.onerror = () => {
+            alert('デフォルトの画像が��つかりませんでした。images/default.png を確認してください。');
+        };
+        this.puzzleImage.src = 'images/default.png';
+    }
+    
+    initializeGame() {
+        if (!this.imageLoaded) return;
+        this.generatePuzzleData();
+        this.ui.createPuzzleGrid(this.gridSize);
+        this.ui.createPuzzlePieces(this.puzzleData);
+        this.ui.createReferenceImage(this.puzzleImage.src);
+    }
+    
+    setupEventListeners() {
+        document.getElementById('difficulty').addEventListener('change', (e) => {
+            this.currentDifficulty = e.target.value;
+            this.setGridSize();
+            this.resetGame();
+        });
+        document.getElementById('shuffleBtn').addEventListener('click', () => this.shufflePieces());
+        document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
+        document.getElementById('playAgainBtn').addEventListener('click', () => {
+            this.resetGame();
+            this.ui.hideCongratulations();
+        });
+        
+        document.getElementById('uploadInput').addEventListener('change', (e) => this.loadUserImage(e));
+
+        this.setupDragAndDrop();
+    }
+    
+    loadUserImage(e) {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                this.puzzleImage.onload = () => {
+                    this.imageLoaded = true;
+                    this.resetGame();
+                };
+                this.puzzleImage.src = event.target.result; // Use dataURL
+            };
+            reader.readAsDataURL(file);
+        } else {
+            alert('画像ファイルを選択してく���さい。');
+        }
+    }
+    
+    setGridSize() {
+        this.gridSize = DIFFICULTIES[this.currentDifficulty].gridSize;
+    }
+    
+    generatePuzzleData() {
+        this.puzzleData = [];
+        for (let i = 0; i < this.gridSize * this.gridSize; i++) {
+            this.puzzleData.push({ id: i, correctPosition: i, currentPosition: null, isPlaced: false, imageData: null });
+        }
+        this.generatePieceImages();
+    }
+    
+    generatePieceImages() {
+        if (!this.puzzleImage) return;
+        const pieceWidth = this.puzzleImage.width / this.gridSize;
+        const pieceHeight = this.puzzleImage.height / this.gridSize;
+        for (let i = 0; i < this.puzzleData.length; i++) {
+            const row = Math.floor(i / this.gridSize);
+            const col = i % this.gridSize;
+            const canvas = document.createElement('canvas');
+            canvas.width = pieceWidth;
+            canvas.height = pieceHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(this.puzzleImage, col * pieceWidth, row * pieceHeight, pieceWidth, pieceHeight, 0, 0, pieceWidth, pieceHeight);
+            this.puzzleData[i].imageData = canvas.toDataURL();
+        }
+    }
+    
+    setupDragAndDrop() {
+        let draggedElement = null;
+        let lastHoveredSlot = null;
+        document.addEventListener('dragstart', (e) => {
+            if (e.target.classList.contains('puzzle-piece')) {
+                draggedElement = e.target;
+                setTimeout(() => e.target.classList.add('dragging'), 0);
+            }
+        });
+        document.addEventListener('dragend', (e) => {
+            if (draggedElement) {
+                e.target.classList.remove('dragging');
+                this.ui.resetPieceStyles(e.target);
+                draggedElement = null;
+            }
+            if (lastHoveredSlot) {
+                lastHoveredSlot.classList.remove('drop-zone');
+                lastHoveredSlot = null;
+            }
+        });
+        document.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const currentSlot = e.target.closest('.puzzle-slot');
+            if (currentSlot !== lastHoveredSlot) {
+                if (lastHoveredSlot) lastHoveredSlot.classList.remove('drop-zone');
+                if (currentSlot) currentSlot.classList.add('drop-zone');
+                lastHoveredSlot = currentSlot;
+            }
+        });
+        document.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const dropTarget = e.target.closest('.puzzle-slot');
+            if (dropTarget && draggedElement) {
+                this.handlePieceDrop(draggedElement, dropTarget);
+            }
+            if (lastHoveredSlot) {
+                lastHoveredSlot.classList.remove('drop-zone');
+                lastHoveredSlot = null;
+            }
+        });
+        this.setupTouchEvents();
+    }
+    
+    setupTouchEvents() {
+        let touchedPiece = null;
+        let initialTouch = null;
+        document.addEventListener('touchstart', (e) => {
+            const piece = e.target.closest('.puzzle-piece');
+            if (piece) {
+                touchedPiece = piece;
+                initialTouch = e.touches[0];
+                piece.classList.add('dragging');
+                this.ui.createTouchFeedback(piece, initialTouch);
+                e.preventDefault();
+            }
+        }, { passive: false });
+        document.addEventListener('touchmove', (e) => {
+            if (touchedPiece && initialTouch) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                if (this.ui.dragPreview) {
+                    this.ui.dragPreview.style.left = `${touch.clientX - 40}px`;
+                    this.ui.dragPreview.style.top = `${touch.clientY - 40}px`;
+                }
+                const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+                this.ui.updateDropZoneHighlight(elementBelow);
+            }
+        }, { passive: false });
+        document.addEventListener('touchend', (e) => {
+            if (touchedPiece) {
+                e.preventDefault();
+                const touch = e.changedTouches[0];
+                const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+                if (elementBelow && elementBelow.classList.contains('puzzle-slot')) {
+                    this.handlePieceDrop(touchedPiece, elementBelow);
+                }
+                this.ui.resetPieceStyles(touchedPiece);
+                this.ui.removeTouchFeedback();
+                this.ui.clearDropZoneHighlights();
+                touchedPiece = null;
+                initialTouch = null;
+            }
+        });
+    }
+    
+    handlePieceDrop(pieceElement, slotElement) {
+        const pieceId = parseInt(pieceElement.dataset.pieceId);
+        const slotPosition = parseInt(slotElement.dataset.position);
+        const currentPosition = this.puzzleData[pieceId].currentPosition;
+        if (currentPosition !== null) {
+            const oldSlot = document.querySelector(`[data-position="${currentPosition}"]`);
+            if (oldSlot) {
+                oldSlot.classList.remove('occupied');
+                oldSlot.innerHTML = '';
+            }
+        }
+        if (slotElement.classList.contains('occupied')) {
+            const existingPiece = slotElement.querySelector('.puzzle-piece');
+            if (existingPiece) {
+                const existingPieceId = parseInt(existingPiece.dataset.pieceId);
+                this.ui.elements.piecesContainer.appendChild(existingPiece);
+                this.puzzleData[existingPieceId].currentPosition = null;
+                this.puzzleData[existingPieceId].isPlaced = false;
+            }
+        }
+        slotElement.innerHTML = '';
+        slotElement.appendChild(pieceElement);
+        slotElement.classList.add('occupied');
+        this.puzzleData[pieceId].currentPosition = slotPosition;
+        this.puzzleData[pieceId].isPlaced = true;
+        if (this.checkWinCondition()) {
+            this.gameCompleted = true;
+            this.ui.showCongratulations();
+            this.playSound('complete');
+        } else {
+            this.playSound('correct');
+        }
+    }
+    
+    checkWinCondition() {
+        return this.puzzleData.every(p => p.isPlaced && p.currentPosition === p.correctPosition);
+    }
+    
+    shufflePieces() {
+        document.querySelectorAll('.puzzle-slot').forEach(slot => {
+            const piece = slot.querySelector('.puzzle-piece');
+            if (piece) {
+                this.ui.elements.piecesContainer.appendChild(piece);
+                const pieceId = parseInt(piece.dataset.pieceId);
+                this.puzzleData[pieceId].currentPosition = null;
+                this.puzzleData[pieceId].isPlaced = false;
+            }
+            slot.classList.remove('occupied');
+            slot.innerHTML = '';
+        });
+        const shuffled = Array.from(this.ui.elements.piecesContainer.children).sort(() => Math.random() - 0.5);
+        shuffled.forEach(piece => this.ui.elements.piecesContainer.appendChild(piece));
+    }
+    
+    resetGame() {
+        this.gameCompleted = false;
+        this.setGridSize();
+        this.initializeGame();
+        this.ui.hideCongratulations();
+    }
+
+    playSound(type) {
+        if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            const frequencies = { correct: 523.25, complete: 659.25 };
+            oscillator.frequency.value = frequencies[type] || 440;
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     new NinjaPuzzleGame();
 });
-
-// Add some fun sound effects (optional)
-function playSound(type) {
-    // This would play different sounds for different actions
-    // For now, we'll use a simple audio context beep
-    if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        switch(type) {
-            case 'correct':
-                oscillator.frequency.value = 523.25; // C5
-                break;
-            case 'complete':
-                oscillator.frequency.value = 659.25; // E5
-                break;
-            default:
-                oscillator.frequency.value = 440; // A4
-        }
-        
-        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-        
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.5);
-    }
-}

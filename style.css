@@ -126,6 +126,11 @@ body {
     color: white;
 }
 
+.btn-upload {
+    background: linear-gradient(135deg, #a8b2c5, #8995b0);
+    color: white;
+}
+
 .btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -195,7 +200,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    opacity: 0.3;
+    opacity: 0.2;
 }
 
 .reference-image img {
@@ -374,14 +379,16 @@ body {
 
 .puzzle-grid {
     display: grid;
-    gap: 4px;
+    gap: 0;
     background: rgba(0, 0, 0, 0.6);
-    border: 3px solid #333;
+    border: 2px solid #333;
     border-radius: 10px;
-    padding: 20px;
+    padding: 0;
     margin: 0 auto 20px auto;
     aspect-ratio: 1;
-    max-width: 500px;
+    max-width: 90vw;
+    width: 500px;
+    max-height: 90vh;
     box-sizing: border-box;
     position: relative;
     z-index: 2;
@@ -391,7 +398,6 @@ body {
 .puzzle-grid.size-4 { grid-template-columns: repeat(4, 1fr); }
 .puzzle-grid.size-5 { grid-template-columns: repeat(5, 1fr); }
 
-/* iPhone12 Pro specific adjustments */
 @media (max-width: 430px) {
     .puzzle-container {
         padding: 15px;
@@ -495,26 +501,17 @@ body {
     background: rgba(255, 255, 255, 0.05);
     border: 1px dashed rgba(255, 255, 255, 0.3);
     border-radius: 0;
-    /* flexレイアウトを削除してマージン・パディングを完全排除 */
     display: block;
     transition: all 0.3s ease;
     overflow: hidden;
     position: relative;
-    /* 固定サイズでパーツと完全一致（ボーダー込み） */
-    width: 60px;
-    height: 60px;
-    min-width: 60px;
-    min-height: 60px;
-    max-width: 60px;
-    max-height: 60px;
-    /* マージン・パディングを完全排除 */
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
+    z-index: 2;
 }
 
 .puzzle-slot.occupied {
-    /* 占有状態でも一切のスタイル変更なし */
+    background-color: #fff;
+    border: none;
 }
 
 .puzzle-slot.drop-zone {
@@ -527,8 +524,8 @@ body {
 }
 
 .puzzle-pieces {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     max-height: 300px;
     overflow-y: auto;
@@ -549,7 +546,6 @@ body {
     }
     
     .puzzle-pieces {
-        grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
         gap: 6px;
         max-height: 180px;
         padding: 6px;
@@ -559,27 +555,22 @@ body {
 .puzzle-piece {
     aspect-ratio: 1;
     background: #f0f0f0;
-    border: none;
-    border-radius: 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     cursor: grab;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: visible;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     /* Better touch handling */
     -webkit-tap-highlight-color: transparent;
     touch-action: none;
     position: relative;
-    /* パーツエリアでもスロットと同じサイズに統一 */
-    min-width: 60px;
-    min-height: 60px;
-    max-width: 60px;
-    max-height: 60px;
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
 }
 
 .puzzle-piece img {
@@ -591,21 +582,22 @@ body {
 
 /* スロット内のパーツを点線枠と完全に同じサイズに */
 .puzzle-slot .puzzle-piece {
-    width: 100% !important;
-    height: 100% !important;
-    min-width: 100% !important;
-    min-height: 100% !important;
-    max-width: 100% !important;
-    max-height: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 0;
     /* ボーダー内側に完全フィット */
-    box-sizing: border-box !important;
+    box-sizing: border-box;
 }
 
 .puzzle-slot .puzzle-piece img {
