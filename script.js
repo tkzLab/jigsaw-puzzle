@@ -637,23 +637,35 @@ class NinjaPuzzleGame {
         const pieceId = parseInt(pieceElement.dataset.pieceId);
         const slotPosition = parseInt(slotElement.dataset.position);
         
-        // Check if slot is already occupied
-        if (slotElement.classList.contains('occupied')) {
-            // Move existing piece back to pieces container
-            const existingPiece = slotElement.querySelector('.puzzle-piece');
-            if (existingPiece) {
-                document.getElementById('puzzlePieces').appendChild(existingPiece);
-                this.puzzleData[parseInt(existingPiece.dataset.pieceId)].currentPosition = null;
-                this.puzzleData[parseInt(existingPiece.dataset.pieceId)].isPlaced = false;
+        // パーツの元の位置を取得してクリーンアップ
+        const currentPosition = this.puzzleData[pieceId].currentPosition;
+        if (currentPosition !== null) {
+            // 元のスロットから占有状態を削除
+            const oldSlot = document.querySelector(`[data-position="${currentPosition}"]`);
+            if (oldSlot) {
+                oldSlot.classList.remove('occupied', 'correct-placement');
             }
         }
         
-        // Place new piece
+        // ドロップ先のスロットが既に占有されている場合の処理
+        if (slotElement.classList.contains('occupied')) {
+            // 既存のパーツをピースコンテナに戻す（移動ではなくコピー防止）
+            const existingPiece = slotElement.querySelector('.puzzle-piece');
+            if (existingPiece) {
+                const existingPieceId = parseInt(existingPiece.dataset.pieceId);
+                // 既存パーツは元の場所に戻さず、ピースコンテナに留める
+                document.getElementById('puzzlePieces').appendChild(existingPiece);
+                this.puzzleData[existingPieceId].currentPosition = null;
+                this.puzzleData[existingPieceId].isPlaced = false;
+            }
+        }
+        
+        // 新しいパーツを配置
         slotElement.innerHTML = '';
         slotElement.appendChild(pieceElement);
         slotElement.classList.add('occupied');
         
-        // Update puzzle data
+        // パズルデータを更新
         this.puzzleData[pieceId].currentPosition = slotPosition;
         this.puzzleData[pieceId].isPlaced = true;
         
@@ -684,9 +696,9 @@ class NinjaPuzzleGame {
             style.id = 'correctPlacementAnimation';
             style.textContent = `
                 @keyframes correctPlacement {
-                    0% { transform: scale(1); }
-                    50% { transform: scale(1.1); background-color: rgba(76, 175, 80, 0.3); }
-                    100% { transform: scale(1); }
+                    0% { background-color: transparent; }
+                    50% { background-color: rgba(76, 175, 80, 0.3); }
+                    100% { background-color: transparent; }
                 }
             `;
             document.head.appendChild(style);

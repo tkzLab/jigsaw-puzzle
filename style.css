@@ -507,14 +507,13 @@ body {
 }
 
 .puzzle-slot.occupied {
-    border: 2px solid #4CAF50;
-    background: rgba(76, 175, 80, 0.1);
+    /* 緑枠を削除してサイズ変化を防ぐ */
 }
 
 .puzzle-slot.drop-zone {
     border-color: #2196F3;
     background: rgba(33, 150, 243, 0.2);
-    transform: scale(1.05);
+    /* transform: scale(1.05); サイズ変化を削除 */
 }
 
 .pieces-container h3 {
@@ -797,8 +796,9 @@ body {
     
     .puzzle-slot.drop-zone, 
     .puzzle-slot.touch-drop-zone {
-        border-width: 3px;
-        background: rgba(76, 175, 80, 0.2);
+        border-color: #2196F3;
+        background: rgba(33, 150, 243, 0.2);
+        /* border-widthの変更によるサイズ変化を防ぐ */
     }
     
     .puzzle-piece {
