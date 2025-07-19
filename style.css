@@ -495,15 +495,22 @@ body {
     background: rgba(255, 255, 255, 0.05);
     border: 1px dashed rgba(255, 255, 255, 0.3);
     border-radius: 0;
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    /* flexレイアウトを削除してマージン・パディングを完全排除 */
+    display: block;
     transition: all 0.3s ease;
-    overflow: hidden; /* パーツが点線枠を超えないように */
+    overflow: hidden;
     position: relative;
+    /* 固定サイズでパーツと完全一致（ボーダー込み） */
+    width: 60px;
+    height: 60px;
     min-width: 60px;
     min-height: 60px;
+    max-width: 60px;
+    max-height: 60px;
+    /* マージン・パディングを完全排除 */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 .puzzle-slot.occupied {
@@ -597,6 +604,8 @@ body {
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
+    /* ボーダー内側に完全フィット */
+    box-sizing: border-box !important;
 }
 
 .puzzle-slot .puzzle-piece img {
@@ -609,6 +618,7 @@ body {
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
+    box-sizing: border-box !important;
 }
 
 /* Mobile touch improvements */
@@ -796,8 +806,16 @@ body {
     }
     
     .puzzle-slot {
+        /* 固定サイズでパーツと完全一致 */
+        width: 40px;
+        height: 40px;
         min-width: 40px;
         min-height: 40px;
+        max-width: 40px;
+        max-height: 40px;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
 }
 
@@ -817,9 +835,17 @@ body {
     .puzzle-slot {
         border-width: 2px;
         transition: all 0.2s ease;
+        /* 固定サイズでパーツと完全一致 */
+        width: 45px;
+        height: 45px;
         min-width: 45px;
         min-height: 45px;
-        overflow: hidden; /* パーツが点線枠を超えないように */
+        max-width: 45px;
+        max-height: 45px;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
     
     .puzzle-slot.drop-zone, 
