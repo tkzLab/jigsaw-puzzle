@@ -11,12 +11,27 @@ body {
     min-height: 100vh;
     color: #333;
     overflow-x: hidden;
+    /* Improved touch handling */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
 }
 
 .game-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 10px;
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 768px) {
+    .game-container {
+        padding: 5px;
+    }
 }
 
 /* Header Styles */
@@ -42,6 +57,22 @@ body {
     justify-content: center;
     gap: 15px;
     flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .game-header h1 {
+        font-size: 1.8em;
+        margin-bottom: 15px;
+    }
+    
+    .controls {
+        gap: 10px;
+    }
+    
+    .btn, .difficulty-select {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
 }
 
 .btn {
@@ -88,12 +119,33 @@ body {
     margin-bottom: 20px;
 }
 
+/* Mobile layout - stack vertically */
+@media (max-width: 768px) {
+    .game-area {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+}
+
 .reference-container {
     background: rgba(255, 255, 255, 0.9);
     border-radius: 20px;
     padding: 20px;
     text-align: center;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .reference-container {
+        padding: 15px;
+        border-radius: 15px;
+    }
+    
+    .reference-container h3 {
+        font-size: 1.2em;
+        margin-bottom: 15px;
+    }
 }
 
 .reference-container h3 {
@@ -273,6 +325,30 @@ body {
 .puzzle-grid.size-4 { grid-template-columns: repeat(4, 1fr); }
 .puzzle-grid.size-5 { grid-template-columns: repeat(5, 1fr); }
 
+/* Mobile puzzle grid adjustments */
+@media (max-width: 768px) {
+    .puzzle-grid {
+        max-width: 280px;
+        margin: 0 auto 15px auto;
+        padding: 8px;
+    }
+    
+    .puzzle-grid.size-3 {
+        max-width: 240px;
+        gap: 4px;
+    }
+    
+    .puzzle-grid.size-4 {
+        max-width: 260px;
+        gap: 3px;
+    }
+    
+    .puzzle-grid.size-5 {
+        max-width: 280px;
+        gap: 2px;
+    }
+}
+
 .puzzle-slot {
     background: rgba(255, 255, 255, 0.3);
     border: 2px dashed #ccc;
@@ -312,6 +388,16 @@ body {
     border-radius: 10px;
 }
 
+/* Mobile puzzle pieces adjustments */
+@media (max-width: 768px) {
+    .puzzle-pieces {
+        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+        gap: 8px;
+        max-height: 250px;
+        padding: 8px;
+    }
+}
+
 .puzzle-piece {
     aspect-ratio: 1;
     background: #f0f0f0;
@@ -324,6 +410,22 @@ body {
     justify-content: center;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Better touch handling */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: none;
+}
+
+/* Mobile touch improvements */
+@media (max-width: 768px) {
+    .puzzle-piece {
+        min-height: 60px;
+        border-width: 3px;
+    }
+    
+    .puzzle-piece:active {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
 }
 
 .puzzle-piece:hover {
@@ -346,6 +448,19 @@ body {
     border-radius: 20px;
     padding: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .game-stats {
+        gap: 20px;
+        padding: 15px;
+        border-radius: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .stat-label, .stat-value {
+        font-size: 14px;
+    }
 }
 
 .stat {
@@ -474,4 +589,54 @@ body {
     .ninja-cup-reference {
         transform: scale(0.6);
     }
+}
+
+/* Touch interaction styles */
+.touch-drop-zone {
+    border-color: #4CAF50 !important;
+    background: rgba(76, 175, 80, 0.3) !important;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+}
+
+.touch-preview {
+    border: 3px solid #2196F3 !important;
+    background: rgba(33, 150, 243, 0.1) !important;
+}
+
+.puzzle-piece.dragging {
+    opacity: 0.5;
+    transform: scale(0.9);
+}
+
+/* Improved mobile interactions */
+@media (max-width: 768px) {
+    .puzzle-slot {
+        border-width: 3px;
+        transition: all 0.2s ease;
+    }
+    
+    .puzzle-slot.drop-zone, 
+    .puzzle-slot.touch-drop-zone {
+        border-width: 4px;
+    }
+    
+    .puzzle-piece {
+        transition: all 0.2s ease;
+    }
+    
+    .puzzle-piece.dragging {
+        opacity: 0.6;
+        transform: scale(0.85);
+    }
+}
+
+/* Disable text selection on mobile */
+.puzzle-container, .pieces-container {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }

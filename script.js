@@ -323,21 +323,45 @@ class NinjaPuzzleGame {
     
     setupTouchEvents() {
         let touchedPiece = null;
+        let initialTouch = null;
+        let dragPreview = null;
         
         document.addEventListener('touchstart', (e) => {
-            if (e.target.classList.contains('puzzle-piece')) {
-                touchedPiece = e.target;
-                e.target.classList.add('dragging');
+            if (e.target.classList.contains('puzzle-piece') || e.target.parentElement.classList.contains('puzzle-piece')) {
+                const piece = e.target.classList.contains('puzzle-piece') ? e.target : e.target.parentElement;
+                touchedPiece = piece;
+                initialTouch = e.touches[0];
+                
+                piece.classList.add('dragging');
+                
+                // Create visual feedback for mobile
+                this.createTouchFeedback(piece, initialTouch);
                 
                 if (!this.startTime && !this.gameCompleted) {
                     this.startTimer();
                 }
+                
+                e.preventDefault();
             }
-        });
+        }, { passive: false });
         
         document.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-        });
+            if (touchedPiece && initialTouch) {
+                e.preventDefault();
+                
+                const touch = e.touches[0];
+                
+                // Update drag preview position
+                if (dragPreview) {
+                    dragPreview.style.left = (touch.clientX - 40) + 'px';
+                    dragPreview.style.top = (touch.clientY - 40) + 'px';
+                }
+                
+                // Highlight potential drop zones
+                const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+                this.updateDropZoneHighlight(elementBelow);
+            }
+        }, { passive: false });
         
         document.addEventListener('touchend', (e) => {
             if (touchedPiece) {
@@ -348,9 +372,58 @@ class NinjaPuzzleGame {
                     this.handlePieceDrop(touchedPiece, elementBelow);
                 }
                 
+                // Clean up
                 touchedPiece.classList.remove('dragging');
+                this.removeTouchFeedback();
+                this.clearDropZoneHighlights();
+                
                 touchedPiece = null;
+                initialTouch = null;
+                dragPreview = null;
             }
+        });
+    }
+    
+    createTouchFeedback(piece, touch) {
+        // Create a visual preview that follows the finger
+        const preview = piece.cloneNode(true);
+        preview.classList.add('touch-preview');
+        preview.style.position = 'fixed';
+        preview.style.left = (touch.clientX - 40) + 'px';
+        preview.style.top = (touch.clientY - 40) + 'px';
+        preview.style.width = '80px';
+        preview.style.height = '80px';
+        preview.style.zIndex = '2000';
+        preview.style.opacity = '0.8';
+        preview.style.pointerEvents = 'none';
+        preview.style.transform = 'scale(1.1)';
+        preview.style.borderRadius = '12px';
+        preview.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.4)';
+        
+        document.body.appendChild(preview);
+        dragPreview = preview;
+    }
+    
+    removeTouchFeedback() {
+        if (dragPreview) {
+            dragPreview.remove();
+            dragPreview = null;
+        }
+    }
+    
+    updateDropZoneHighlight(element) {
+        // Clear previous highlights
+        this.clearDropZoneHighlights();
+        
+        // Highlight current drop zone
+        if (element && element.classList.contains('puzzle-slot')) {
+            element.classList.add('touch-drop-zone');
+        }
+    }
+    
+    clearDropZoneHighlights() {
+        document.querySelectorAll('.touch-drop-zone').forEach(slot => {
+            slot.classList.remove('touch-drop-zone');
         });
     }
     
