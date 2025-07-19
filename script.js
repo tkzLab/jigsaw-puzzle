@@ -388,6 +388,9 @@ class NinjaPuzzleGame {
             slot.dataset.position = i;
             puzzleGrid.appendChild(slot);
         }
+        
+        // 全スロットの状態をリセット
+        console.log(`🔍 Created ${this.gridSize * this.gridSize} clean slots`);
     }
     
     createPuzzlePieces() {
@@ -402,6 +405,11 @@ class NinjaPuzzleGame {
             pieceElement.className = 'puzzle-piece';
             pieceElement.draggable = true;
             pieceElement.dataset.pieceId = piece.id;
+            
+            // パーツの初期位置を明確にリセット
+            piece.currentPosition = null;
+            piece.isPlaced = false;
+            console.log(`🔍 Created piece ${piece.id} with initial position: ${piece.currentPosition}`);
             
             // Create image element for the piece
             const img = document.createElement('img');
@@ -637,13 +645,26 @@ class NinjaPuzzleGame {
         const pieceId = parseInt(pieceElement.dataset.pieceId);
         const slotPosition = parseInt(slotElement.dataset.position);
         
+        console.log(`🔍 Dropping piece ${pieceId} to slot ${slotPosition}`);
+        
         // パーツの元の位置を取得してクリーンアップ
         const currentPosition = this.puzzleData[pieceId].currentPosition;
+        console.log(`🔍 Current position of piece ${pieceId}: ${currentPosition}`);
+        
         if (currentPosition !== null) {
             // 元のスロットから占有状態を削除
             const oldSlot = document.querySelector(`[data-position="${currentPosition}"]`);
+            console.log(`🔍 Found old slot:`, oldSlot);
             if (oldSlot) {
+                // 元のスロットからパーツも物理的に削除
+                const oldPiece = oldSlot.querySelector('.puzzle-piece');
+                if (oldPiece && oldPiece !== pieceElement) {
+                    console.log(`🔍 Removing old piece from slot ${currentPosition}`);
+                    oldPiece.remove();
+                }
                 oldSlot.classList.remove('occupied', 'correct-placement');
+                oldSlot.innerHTML = ''; // 完全にクリア
+                console.log(`✅ Cleaned old slot ${currentPosition}`);
             }
         }
         
@@ -664,10 +685,12 @@ class NinjaPuzzleGame {
         slotElement.innerHTML = '';
         slotElement.appendChild(pieceElement);
         slotElement.classList.add('occupied');
+        console.log(`✅ Placed piece ${pieceId} in slot ${slotPosition}`);
         
         // パズルデータを更新
         this.puzzleData[pieceId].currentPosition = slotPosition;
         this.puzzleData[pieceId].isPlaced = true;
+        console.log(`✅ Updated piece ${pieceId} data: position=${slotPosition}, isPlaced=${this.puzzleData[pieceId].isPlaced}`);
         
         // Add special effect for correct placement
         if (pieceId === slotPosition) {
