@@ -356,8 +356,15 @@ class NinjaPuzzleGame {
     }
     
     createReferenceImage() {
+        console.log('🔍 createReferenceImage called');
+        
         const referenceImageDiv = document.querySelector('.reference-image');
-        if (!referenceImageDiv) return;
+        console.log('🔍 referenceImageDiv found:', referenceImageDiv);
+        
+        if (!referenceImageDiv) {
+            console.error('❌ .reference-image element not found!');
+            return;
+        }
         
         referenceImageDiv.innerHTML = '';
         
@@ -365,13 +372,43 @@ class NinjaPuzzleGame {
         img.src = this.puzzleImage.src;
         img.className = 'reference-image-display';
         
+        console.log('🔍 Image src:', img.src);
+        console.log('🔍 Puzzle image loaded:', this.puzzleImage);
+        
+        // デバッグ用の視覚的な確認
+        img.style.border = '5px solid blue';
+        img.style.background = 'yellow';
+        
         referenceImageDiv.appendChild(img);
+        
+        console.log('✅ Reference image added to DOM');
+        
+        // デバッグ用テキストも追加
+        const debugText = document.createElement('div');
+        debugText.textContent = 'DEBUG: Reference Image Here';
+        debugText.style.color = 'red';
+        debugText.style.fontSize = '20px';
+        debugText.style.fontWeight = 'bold';
+        debugText.style.position = 'absolute';
+        debugText.style.top = '10px';
+        debugText.style.left = '10px';
+        debugText.style.zIndex = '2000';
+        referenceImageDiv.appendChild(debugText);
     }
     
     createPuzzleGrid() {
         const puzzleGrid = document.getElementById('puzzleGrid');
+        
+        // 見本コンテナを保持
+        const referenceContainer = puzzleGrid.querySelector('.reference-container');
+        
         puzzleGrid.innerHTML = '';
         puzzleGrid.className = `puzzle-grid size-${this.gridSize}`;
+        
+        // 見本コンテナを復元
+        if (referenceContainer) {
+            puzzleGrid.appendChild(referenceContainer);
+        }
         
         for (let i = 0; i < this.gridSize * this.gridSize; i++) {
             const slot = document.createElement('div');
