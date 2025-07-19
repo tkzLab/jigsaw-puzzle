@@ -188,6 +188,7 @@ class NinjaPuzzleGame {
         this.ui.createPuzzleGrid(this.gridSize);
         this.ui.createPuzzlePieces(this.puzzleData);
         this.ui.createReferenceImage(this.puzzleImage.src);
+        this.ui.hideCongratulations(); // Ensure it's hidden on init
     }
     
     setupEventListeners() {

@@ -71,11 +71,12 @@ body {
 
 @media (max-width: 768px) {
     .game-header {
+        padding: 10px;
         margin-bottom: 15px;
     }
     
     .game-header h1 {
-        font-size: 1.8em;
+        font-size: 1.5em;
         margin-bottom: 8px;
     }
     
@@ -418,6 +419,7 @@ body {
         padding: 0;
         gap: 2px;
     }
+}
 
 .puzzle-slot {
     background: rgba(255, 255, 255, 0.05);
@@ -446,8 +448,8 @@ body {
 }
 
 .puzzle-pieces {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: 10px;
     max-height: 300px;
     overflow-y: auto;
