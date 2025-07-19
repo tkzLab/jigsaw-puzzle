@@ -199,36 +199,24 @@ body {
 }
 
 .reference-image img {
-    width: calc(100% - 40px) !important;
-    height: calc(100% - 40px) !important;
+    width: 100% !important;
+    height: 100% !important;
     object-fit: contain;
     border: none !important;
     border-radius: 0 !important;
     position: absolute;
-    top: 20px;
-    left: 20px;
+    top: 0;
+    left: 0;
 }
 
 /* Desktop size-specific adjustments for reference image */
-.puzzle-grid.size-3 .reference-image img {
-    width: calc(100% - 40px) !important;
-    height: calc(100% - 40px) !important;
-    top: 20px !important;
-    left: 20px !important;
-}
-
-.puzzle-grid.size-4 .reference-image img {
-    width: calc(100% - 40px) !important;
-    height: calc(100% - 40px) !important;
-    top: 20px !important;
-    left: 20px !important;
-}
-
+.puzzle-grid.size-3 .reference-image img,
+.puzzle-grid.size-4 .reference-image img,
 .puzzle-grid.size-5 .reference-image img {
-    width: calc(100% - 40px) !important;
-    height: calc(100% - 40px) !important;
-    top: 20px !important;
-    left: 20px !important;
+    width: 100% !important;
+    height: 100% !important;
+    top: 0 !important;
+    left: 0 !important;
 }
 
 /* Ninja Coffee Cup Character */
@@ -435,24 +423,19 @@ body {
     }
     
     .reference-image img {
-        width: calc(100% - 30px) !important;
-        height: calc(100% - 30px) !important;
-        top: 15px !important;
-        left: 15px !important;
+        width: 100% !important;
+        height: 100% !important;
+        top: 0 !important;
+        left: 0 !important;
     }
     
-    .puzzle-grid.size-3 .reference-image img {
-        width: calc(100% - 36px) !important;
-        height: calc(100% - 36px) !important;
-        top: 18px !important;
-        left: 18px !important;
-    }
-    
+    .puzzle-grid.size-3 .reference-image img,
+    .puzzle-grid.size-4 .reference-image img,
     .puzzle-grid.size-5 .reference-image img {
-        width: calc(100% - 24px) !important;
-        height: calc(100% - 24px) !important;
-        top: 12px !important;
-        left: 12px !important;
+        width: 100% !important;
+        height: 100% !important;
+        top: 0 !important;
+        left: 0 !important;
     }
 }
 
@@ -490,24 +473,19 @@ body {
     }
     
     .reference-image img {
-        width: calc(100% - 30px) !important;
-        height: calc(100% - 30px) !important;
-        top: 15px !important;
-        left: 15px !important;
+        width: 100% !important;
+        height: 100% !important;
+        top: 0 !important;
+        left: 0 !important;
     }
     
-    .puzzle-grid.size-3 .reference-image img {
-        width: calc(100% - 36px) !important;
-        height: calc(100% - 36px) !important;
-        top: 18px !important;
-        left: 18px !important;
-    }
-    
+    .puzzle-grid.size-3 .reference-image img,
+    .puzzle-grid.size-4 .reference-image img,
     .puzzle-grid.size-5 .reference-image img {
-        width: calc(100% - 24px) !important;
-        height: calc(100% - 24px) !important;
-        top: 12px !important;
-        left: 12px !important;
+        width: 100% !important;
+        height: 100% !important;
+        top: 0 !important;
+        left: 0 !important;
     }
 }
 
