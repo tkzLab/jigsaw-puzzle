@@ -36,20 +36,16 @@ body {
 
 /* Header Styles */
 .game-header {
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
+    padding: 10px 0;
+    margin-bottom: 10px;
 }
 
 .game-header h1 {
     text-align: center;
-    font-size: 2.5em;
-    color: #4a4a4a;
+    font-size: 2em;
+    color: #fff;
     margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .version {
@@ -448,8 +444,9 @@ body {
 }
 
 .puzzle-pieces {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 10px;
     max-height: 300px;
     overflow-y: auto;
@@ -548,13 +545,18 @@ body {
 
 /* Mobile touch improvements */
 @media (max-width: 768px) {
-    .puzzle-piece {
-        min-width: 45px;
-        min-height: 45px;
-        max-width: 45px;
-        max-height: 45px;
-        width: 45px;
-        height: 45px;
+    .puzzle-grid {
+        width: 90vw;
+        max-width: 90vw;
+    }
+
+    .puzzle-pieces {
+        gap: 10px;
+    }
+
+    .puzzle-pieces .puzzle-piece {
+        width: 60px;
+        height: 60px;
     }
     
     .puzzle-piece:active {
@@ -750,18 +752,25 @@ body {
 
 /* Improved mobile interactions */
 @media (max-width: 768px) {
-    .puzzle-slot.drop-zone, 
-    .puzzle-slot.touch-drop-zone {
-        /* 枠を完全に無効化 */
+    .puzzle-grid {
+        width: 90vw;
+        max-width: 90vw;
     }
-    
-    .puzzle-piece {
-        transition: all 0.2s ease;
+
+    .puzzle-pieces {
+        gap: 10px;
+    }
+
+    .puzzle-pieces .puzzle-piece {
         width: 60px;
         height: 60px;
     }
     
-    /* Dragging styles inherited from main definition */
+    .puzzle-piece:active {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    }
 }
 
 /* Disable text selection on mobile */
