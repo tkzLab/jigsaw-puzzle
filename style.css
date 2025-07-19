@@ -119,12 +119,13 @@ body {
     margin-bottom: 20px;
 }
 
-/* Mobile layout - stack vertically */
+/* Mobile layout - optimized for first view */
 @media (max-width: 768px) {
     .game-area {
-        grid-template-columns: 1fr;
-        gap: 15px;
-        margin-bottom: 15px;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: start;
     }
 }
 
@@ -138,13 +139,17 @@ body {
 
 @media (max-width: 768px) {
     .reference-container {
-        padding: 15px;
-        border-radius: 15px;
+        padding: 10px;
+        border-radius: 10px;
     }
     
     .reference-container h3 {
-        font-size: 1.2em;
-        margin-bottom: 15px;
+        font-size: 1em;
+        margin-bottom: 8px;
+    }
+    
+    .reference-image {
+        min-height: 120px;
     }
 }
 
@@ -327,38 +332,44 @@ body {
 
 /* Mobile puzzle grid adjustments */
 @media (max-width: 768px) {
+    .puzzle-container {
+        padding: 10px;
+    }
+    
     .puzzle-grid {
-        max-width: 280px;
-        margin: 0 auto 15px auto;
-        padding: 8px;
+        max-width: 160px;
+        margin: 0 auto 10px auto;
+        padding: 6px;
+        gap: 2px;
     }
     
     .puzzle-grid.size-3 {
-        max-width: 240px;
-        gap: 4px;
+        max-width: 150px;
+        gap: 2px;
     }
     
     .puzzle-grid.size-4 {
-        max-width: 260px;
-        gap: 3px;
+        max-width: 160px;
+        gap: 1px;
     }
     
     .puzzle-grid.size-5 {
-        max-width: 280px;
-        gap: 2px;
+        max-width: 170px;
+        gap: 1px;
     }
 }
 
 .puzzle-slot {
-    background: rgba(255, 255, 255, 0.3);
-    border: 2px dashed #ccc;
-    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px dashed rgba(255, 255, 255, 0.5);
+    border-radius: 0;
     aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
-    overflow: hidden;
+    overflow: visible;
+    position: relative;
 }
 
 .puzzle-slot.occupied {
@@ -390,41 +401,52 @@ body {
 
 /* Mobile puzzle pieces adjustments */
 @media (max-width: 768px) {
+    .pieces-container {
+        padding: 10px;
+    }
+    
+    .pieces-container h3 {
+        font-size: 1em;
+        margin-bottom: 8px;
+    }
+    
     .puzzle-pieces {
-        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-        gap: 8px;
-        max-height: 250px;
-        padding: 8px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        max-height: 180px;
+        padding: 6px;
     }
 }
 
 .puzzle-piece {
     aspect-ratio: 1;
     background: #f0f0f0;
-    border: 2px solid #333;
-    border-radius: 8px;
+    border: none;
+    border-radius: 0;
     cursor: grab;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: visible;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
     /* Better touch handling */
     -webkit-tap-highlight-color: transparent;
     touch-action: none;
+    position: relative;
 }
 
 /* Mobile touch improvements */
 @media (max-width: 768px) {
     .puzzle-piece {
-        min-height: 60px;
-        border-width: 3px;
+        min-height: 50px;
     }
     
     .puzzle-piece:active {
         transform: scale(1.05);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
     }
 }
 
@@ -605,20 +627,23 @@ body {
 }
 
 .puzzle-piece.dragging {
-    opacity: 0.5;
-    transform: scale(0.9);
+    opacity: 0.6;
+    transform: scale(0.95);
+    z-index: 1000;
+    pointer-events: none;
 }
 
 /* Improved mobile interactions */
 @media (max-width: 768px) {
     .puzzle-slot {
-        border-width: 3px;
+        border-width: 2px;
         transition: all 0.2s ease;
     }
     
     .puzzle-slot.drop-zone, 
     .puzzle-slot.touch-drop-zone {
-        border-width: 4px;
+        border-width: 3px;
+        background: rgba(76, 175, 80, 0.2);
     }
     
     .puzzle-piece {
@@ -626,8 +651,8 @@ body {
     }
     
     .puzzle-piece.dragging {
-        opacity: 0.6;
-        transform: scale(0.85);
+        opacity: 0.7;
+        transform: scale(0.9);
     }
 }
 

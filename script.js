@@ -191,24 +191,171 @@ class NinjaPuzzleGame {
             const col = i % this.gridSize;
             
             const canvas = document.createElement('canvas');
-            canvas.width = pieceWidth;
-            canvas.height = pieceHeight;
+            canvas.width = pieceWidth + 40; // Extra space for tabs
+            canvas.height = pieceHeight + 40;
             const ctx = canvas.getContext('2d');
             
-            // Draw the piece from the original image
+            // Create puzzle piece shape with tabs
+            this.createPuzzlePieceShape(ctx, canvas.width, canvas.height, row, col);
+            
+            // Clip and draw the image
+            ctx.clip();
             ctx.drawImage(
                 this.puzzleImage,
                 col * pieceWidth, row * pieceHeight, pieceWidth, pieceHeight,
-                0, 0, pieceWidth, pieceHeight
+                20, 20, pieceWidth, pieceHeight
             );
             
-            // Add border to make pieces more visible
-            ctx.strokeStyle = '#333';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(1, 1, pieceWidth - 2, pieceHeight - 2);
-            
             this.puzzleData[i].imageData = canvas.toDataURL();
+            this.puzzleData[i].clipPath = this.generateClipPath(row, col);
         }
+    }
+    
+    createPuzzlePieceShape(ctx, width, height, row, col) {
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const tabSize = 15;
+        const pieceWidth = width - 40;
+        const pieceHeight = height - 40;
+        
+        ctx.beginPath();
+        
+        // Start from top-left
+        ctx.moveTo(20, 20);
+        
+        // Top edge with potential tab
+        if (row === 0) {
+            // Top edge - no tab
+            ctx.lineTo(width - 20, 20);
+        } else {
+            // Top edge with tab
+            const hasTab = (row + col) % 2 === 0;
+            ctx.lineTo(centerX - tabSize, 20);
+            if (hasTab) {
+                ctx.arc(centerX, 20, tabSize, Math.PI, 0, false);
+            } else {
+                ctx.arc(centerX, 20, tabSize, 0, Math.PI, false);
+            }
+            ctx.lineTo(width - 20, 20);
+        }
+        
+        // Right edge with potential tab
+        if (col === this.gridSize - 1) {
+            // Right edge - no tab
+            ctx.lineTo(width - 20, height - 20);
+        } else {
+            // Right edge with tab
+            const hasTab = (row + col + 1) % 2 === 0;
+            ctx.lineTo(width - 20, centerY - tabSize);
+            if (hasTab) {
+                ctx.arc(width - 20, centerY, tabSize, -Math.PI/2, Math.PI/2, false);
+            } else {
+                ctx.arc(width - 20, centerY, tabSize, Math.PI/2, -Math.PI/2, false);
+            }
+            ctx.lineTo(width - 20, height - 20);
+        }
+        
+        // Bottom edge with potential tab
+        if (row === this.gridSize - 1) {
+            // Bottom edge - no tab
+            ctx.lineTo(20, height - 20);
+        } else {
+            // Bottom edge with tab
+            const hasTab = (row + col + 2) % 2 === 0;
+            ctx.lineTo(centerX + tabSize, height - 20);
+            if (hasTab) {
+                ctx.arc(centerX, height - 20, tabSize, 0, Math.PI, false);
+            } else {
+                ctx.arc(centerX, height - 20, tabSize, Math.PI, 0, false);
+            }
+            ctx.lineTo(20, height - 20);
+        }
+        
+        // Left edge with potential tab
+        if (col === 0) {
+            // Left edge - no tab
+            ctx.lineTo(20, 20);
+        } else {
+            // Left edge with tab
+            const hasTab = (row + col + 3) % 2 === 0;
+            ctx.lineTo(20, centerY + tabSize);
+            if (hasTab) {
+                ctx.arc(20, centerY, tabSize, Math.PI/2, -Math.PI/2, false);
+            } else {
+                ctx.arc(20, centerY, tabSize, -Math.PI/2, Math.PI/2, false);
+            }
+            ctx.lineTo(20, 20);
+        }
+        
+        ctx.closePath();
+    }
+    
+    generateClipPath(row, col) {
+        // Generate CSS clip-path for puzzle piece shape
+        const centerX = 50;
+        const centerY = 50;
+        const tabSize = 7;
+        
+        let path = `polygon(`;
+        let points = [];
+        
+        // Top edge
+        if (row === 0) {
+            points.push(`10% 10%`, `90% 10%`);
+        } else {
+            const hasTab = (row + col) % 2 === 0;
+            points.push(`10% 10%`, `${centerX - tabSize}% 10%`);
+            if (hasTab) {
+                points.push(`${centerX - tabSize}% 5%`, `${centerX + tabSize}% 5%`);
+            } else {
+                points.push(`${centerX - tabSize}% 15%`, `${centerX + tabSize}% 15%`);
+            }
+            points.push(`${centerX + tabSize}% 10%`, `90% 10%`);
+        }
+        
+        // Right edge
+        if (col === this.gridSize - 1) {
+            points.push(`90% 90%`);
+        } else {
+            const hasTab = (row + col + 1) % 2 === 0;
+            points.push(`90% ${centerY - tabSize}%`);
+            if (hasTab) {
+                points.push(`95% ${centerY - tabSize}%`, `95% ${centerY + tabSize}%`);
+            } else {
+                points.push(`85% ${centerY - tabSize}%`, `85% ${centerY + tabSize}%`);
+            }
+            points.push(`90% ${centerY + tabSize}%`, `90% 90%`);
+        }
+        
+        // Bottom edge
+        if (row === this.gridSize - 1) {
+            points.push(`10% 90%`);
+        } else {
+            const hasTab = (row + col + 2) % 2 === 0;
+            points.push(`${centerX + tabSize}% 90%`);
+            if (hasTab) {
+                points.push(`${centerX + tabSize}% 95%`, `${centerX - tabSize}% 95%`);
+            } else {
+                points.push(`${centerX + tabSize}% 85%`, `${centerX - tabSize}% 85%`);
+            }
+            points.push(`${centerX - tabSize}% 90%`, `10% 90%`);
+        }
+        
+        // Left edge
+        if (col === 0) {
+            points.push(`10% 10%`);
+        } else {
+            const hasTab = (row + col + 3) % 2 === 0;
+            points.push(`10% ${centerY + tabSize}%`);
+            if (hasTab) {
+                points.push(`5% ${centerY + tabSize}%`, `5% ${centerY - tabSize}%`);
+            } else {
+                points.push(`15% ${centerY + tabSize}%`, `15% ${centerY - tabSize}%`);
+            }
+            points.push(`10% ${centerY - tabSize}%`, `10% 10%`);
+        }
+        
+        return `polygon(${points.join(', ')})`;
     }
     
     createReferenceImage() {
@@ -262,6 +409,9 @@ class NinjaPuzzleGame {
             img.style.objectFit = 'cover';
             img.style.pointerEvents = 'none'; // Prevent image from interfering with drag
             
+            // Apply puzzle piece shape
+            pieceElement.style.clipPath = piece.clipPath || 'none';
+            
             pieceElement.appendChild(img);
             piecesContainer.appendChild(pieceElement);
         });
@@ -289,6 +439,9 @@ class NinjaPuzzleGame {
         document.addEventListener('dragend', (e) => {
             if (e.target.classList.contains('puzzle-piece')) {
                 e.target.classList.remove('dragging');
+                // Force visual update
+                e.target.style.transform = '';
+                e.target.style.opacity = '';
                 draggedElement = null;
             }
         });
@@ -409,6 +562,16 @@ class NinjaPuzzleGame {
             dragPreview.remove();
             dragPreview = null;
         }
+        
+        // Remove any remaining dragging classes
+        document.querySelectorAll('.puzzle-piece.dragging').forEach(piece => {
+            piece.classList.remove('dragging');
+        });
+        
+        // Force redraw to prevent visual artifacts
+        document.body.style.display = 'none';
+        document.body.offsetHeight; // Trigger reflow
+        document.body.style.display = '';
     }
     
     updateDropZoneHighlight(element) {
