@@ -11,12 +11,8 @@ body {
     min-height: 100vh;
     color: #333;
     overflow-x: hidden;
-    /* Improved touch handling */
     -webkit-touch-callout: none;
     -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
     touch-action: manipulation;
 }
@@ -25,13 +21,6 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 10px;
-}
-
-/* Mobile-first responsive design */
-@media (max-width: 768px) {
-    .game-container {
-        padding: 5px;
-    }
 }
 
 /* Header Styles */
@@ -46,57 +35,6 @@ body {
     color: #fff;
     margin-bottom: 10px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.version {
-    text-align: center;
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 15px;
-    font-weight: normal;
-}
-
-.controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    flex-direction: row;
-}
-
-@media (max-width: 768px) {
-    .game-header {
-        padding: 10px;
-        margin-bottom: 15px;
-    }
-    
-    .game-header h1 {
-        font-size: 1.5em;
-        margin-bottom: 8px;
-    }
-    
-    .version {
-        margin-bottom: 10px;
-        font-size: 0.8em;
-    }
-    
-    .controls {
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    
-    .btn, .difficulty-select {
-        padding: 8px 12px;
-        font-size: 13px;
-        min-width: auto;
-        white-space: nowrap;
-    }
-    
-    .difficulty-select {
-        max-width: 120px;
-    }
 }
 
 .btn {
@@ -141,229 +79,10 @@ body {
 }
 
 /* Game Area */
-.game-area {
-    position: relative;
-    width: 100%;
-    margin-bottom: 20px;
-    box-sizing: border-box;
-}
-
-/* All mobile devices - background hint layout */
-@media (max-width: 768px) {
-    .game-area {
-        position: relative !important;
-        width: 100% !important;
-        margin-bottom: 10px;
-    }
-    
-    .puzzle-container {
-        width: 100% !important;
-        position: relative !important;
-    }
-}
-
-
-
-.reference-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    padding: 0;
-    text-align: center;
-    box-shadow: none;
-    z-index: 1;
-    pointer-events: none;
-}
-
-
-
-.reference-container h3 {
-    display: none;
-}
-
-.reference-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0.2;
-}
-
-.reference-image img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain;
-    border: none !important;
-    border-radius: 0 !important;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-/* Desktop size-specific adjustments for reference image */
-.puzzle-grid.size-3 .reference-image img,
-.puzzle-grid.size-4 .reference-image img,
-.puzzle-grid.size-5 .reference-image img {
-    width: 100% !important;
-    height: 100% !important;
-    top: 0 !important;
-    left: 0 !important;
-}
-
-/* Ninja Coffee Cup Character */
-.ninja-cup-reference {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 120px;
-}
-
-
-
-
-
-/* Alternative CSS Art Version */
-.ninja-cup-art {
-    width: 200px;
-    height: 280px;
-    position: relative;
-    margin: 20px auto;
-}
-
-/* Coffee Cup Body */
-.ninja-cup-art::before {
-    content: '';
-    position: absolute;
-    width: 120px;
-    height: 160px;
-    background: linear-gradient(to bottom, #8B4513 0%, #DEB887 50%, #F5DEB3 100%);
-    border-radius: 15px 15px 25px 25px;
-    top: 80px;
-    left: 40px;
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
-}
-
-/* Coffee Cup Lid */
-.ninja-cup-art::after {
-    content: '';
-    position: absolute;
-    width: 140px;
-    height: 20px;
-    background: linear-gradient(to bottom, #4a4a4a, #333);
-    border-radius: 50px;
-    top: 70px;
-    left: 30px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Ninja Headband */
-.ninja-headband {
-    position: absolute;
-    background: linear-gradient(90deg, #2c3e50, #34495e);
-    border-radius: 50px;
-    width: 180px;
-    height: 40px;
-    top: 20px;
-    left: 10px;
-}
-
-/* Eyes */
-.ninja-eyes {
-    position: absolute;
-    top: 90px;
-    left: 50px;
-    width: 100px;
-    height: 40px;
-}
-
-.ninja-eyes::before,
-.ninja-eyes::after {
-    content: '';
-    position: absolute;
-    width: 25px;
-    height: 25px;
-    background: white;
-    border-radius: 50%;
-    top: 0;
-}
-
-.ninja-eyes::before {
-    left: 15px;
-    box-shadow: inset 8px 8px 0 #333;
-}
-
-.ninja-eyes::after {
-    right: 15px;
-    box-shadow: inset -8px 8px 0 #333;
-}
-
-/* Face Mask */
-.ninja-mask {
-    position: absolute;
-    width: 100px;
-    height: 60px;
-    background: #1a1a1a;
-    top: 120px;
-    left: 50px;
-    border-radius: 0 0 50px 50px;
-}
-
-/* Headband Symbol */
-.ninja-symbol {
-    position: absolute;
-    width: 30px;
-    height: 20px;
-    background: #c0392b;
-    top: 30px;
-    left: 85px;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.ninja-symbol::before {
-    content: '🍃';
-    font-size: 12px;
-}
-
-/* Swords */
-.ninja-sword-left,
-.ninja-sword-right {
-    position: absolute;
-    width: 3px;
-    height: 60px;
-    background: linear-gradient(to bottom, #FFD700, #DAA520);
-    top: 180px;
-}
-
-.ninja-sword-left {
-    left: 20px;
-    transform: rotate(-15deg);
-}
-
-.ninja-sword-right {
-    right: 20px;
-    transform: rotate(15deg);
-}
-
-/* Puzzle Container */
 .puzzle-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 20px;
     padding: 20px;
@@ -379,7 +98,7 @@ body {
     border: 2px solid #333;
     border-radius: 10px;
     padding: 0;
-    margin: 0 auto 20px auto;
+    margin: 0;
     aspect-ratio: 1;
     max-width: 90vw;
     width: 500px;
@@ -393,39 +112,37 @@ body {
 .puzzle-grid.size-4 { grid-template-columns: repeat(4, 1fr); }
 .puzzle-grid.size-5 { grid-template-columns: repeat(5, 1fr); }
 
-@media (max-width: 430px) {
-    .puzzle-container {
-        padding: 10px;
-    }
-    
-    .puzzle-grid {
-        padding: 0;
-        gap: 1px;
-        border-width: 1px;
-    }
+.reference-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
 }
 
-/* General mobile adjustments */
-@media (min-width: 431px) and (max-width: 768px) {
-    .puzzle-container {
-        padding: 15px;
-    }
-    
-    .puzzle-grid {
-        padding: 0;
-        gap: 2px;
-    }
+.reference-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.2;
+}
+
+.reference-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .puzzle-slot {
     background: rgba(255, 255, 255, 0.05);
     border: 1px dashed rgba(255, 255, 255, 0.3);
-    border-radius: 0;
-    display: block;
     transition: all 0.3s ease;
     overflow: hidden;
     position: relative;
-    box-sizing: border-box;
     z-index: 2;
 }
 
@@ -434,13 +151,8 @@ body {
     border: none;
 }
 
-.puzzle-slot.drop-zone {
-    /* 枠を完全に無効化 */
-}
-
-.pieces-container h3 {
-    margin-bottom: 15px;
-    color: #4a4a4a;
+.pieces-container.hidden {
+    display: none;
 }
 
 .puzzle-pieces {
@@ -448,29 +160,10 @@ body {
     flex-wrap: wrap;
     justify-content: center;
     gap: 10px;
-    max-height: 300px;
-    overflow-y: auto;
     padding: 10px;
     background: rgba(240, 240, 240, 0.5);
     border-radius: 10px;
-}
-
-/* Mobile puzzle pieces adjustments */
-@media (max-width: 768px) {
-    .pieces-container {
-        padding: 10px;
-    }
-    
-    .pieces-container h3 {
-        font-size: 1em;
-        margin-bottom: 8px;
-    }
-    
-    .puzzle-pieces {
-        gap: 6px;
-        max-height: 180px;
-        padding: 6px;
-    }
+    touch-action: none; /* Prevent page scroll when interacting with pieces */
 }
 
 .puzzle-piece {
@@ -480,90 +173,25 @@ body {
     border-radius: 4px;
     cursor: grab;
     transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     overflow: hidden;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-    /* Better touch handling */
-    -webkit-tap-highlight-color: transparent;
-    touch-action: none;
-    position: relative;
     width: 60px;
     height: 60px;
     flex-shrink: 0;
 }
 
-.game-actions {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    margin-top: 20px;
-}
-
 .puzzle-piece img {
-    width: 100% !important;
-    height: 100% !important;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border-radius: 0;
 }
 
-/* スロット内のパーツを点線枠と完全に同じサイズに */
 .puzzle-slot .puzzle-piece {
     width: 100%;
     height: 100%;
-    min-width: 100%;
-    min-height: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    margin: 0;
-    padding: 0;
     border: none;
     box-shadow: none;
-    position: absolute;
-    top: 0;
-    left: 0;
     border-radius: 0;
-    /* ボーダー内側に完全フィット */
-    box-sizing: border-box;
-}
-
-.puzzle-slot .puzzle-piece img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    box-sizing: border-box !important;
-}
-
-/* Mobile touch improvements */
-@media (max-width: 768px) {
-    .puzzle-grid {
-        width: 90vw;
-        max-width: 90vw;
-    }
-
-    .puzzle-pieces {
-        gap: 10px;
-    }
-
-    .puzzle-pieces .puzzle-piece {
-        width: 60px;
-        height: 60px;
-    }
-    
-    .puzzle-piece:active {
-        transform: scale(1.05);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-    }
 }
 
 .puzzle-piece:hover {
@@ -572,54 +200,25 @@ body {
 }
 
 .puzzle-piece.dragging {
-    cursor: grabbing !important;
-    opacity: 0.8 !important;
-    z-index: 1000 !important;
-    transform: scale(0.95) !important;
-    transition: none !important;
-    pointer-events: none !important;
-    will-change: transform, opacity;
+    cursor: grabbing;
+    opacity: 0.8;
+    z-index: 1000;
+    transform: scale(0.95);
+    transition: none;
+    pointer-events: none;
 }
 
-/* Game Stats */
-.game-stats {
+.game-actions {
     display: flex;
     justify-content: center;
-    gap: 40px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
-@media (max-width: 768px) {
-    .game-stats {
-        gap: 20px;
-        padding: 15px;
-        border-radius: 15px;
-        margin-bottom: 15px;
-    }
-    
-    .stat-label, .stat-value {
-        font-size: 14px;
-    }
-}
-
-.stat {
-    text-align: center;
-}
-
-.stat-label {
-    display: block;
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 5px;
-}
-
-.stat-value {
-    font-size: 24px;
-    font-weight: bold;
-    color: #4a4a4a;
+.game-actions .difficulty-select {
+    flex-basis: 100%;
+    margin-bottom: 10px;
 }
 
 /* Congratulations Modal */
@@ -669,89 +268,37 @@ body {
 }
 
 @keyframes bounceIn {
-    0% {
-        transform: scale(0.3);
-        opacity: 0;
-    }
-    50% {
-        transform: scale(1.1);
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-    }
-    40% {
-        transform: translateY(-10px);
-    }
-    60% {
-        transform: translateY(-5px);
-    }
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .game-area {
-        grid-template-columns: 1fr;
+    .game-container {
+        padding: 5px;
     }
-    
+
     .game-header {
         padding: 10px;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
     
     .game-header h1 {
         font-size: 1.5em;
         margin-bottom: 8px;
     }
-    
-    .controls {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .game-stats {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .ninja-cup-reference {
-        transform: scale(0.8);
-    }
-}
 
-@media (max-width: 480px) {
-    .game-container {
-        padding: 10px;
+    .puzzle-container {
+        padding: 15px;
     }
-    
-    .puzzle-pieces {
-        grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
-    }
-    
-    .ninja-cup-reference {
-        transform: scale(0.6);
-    }
-}
 
-/* Touch interaction styles */
-.touch-drop-zone {
-    /* 枠を完全に無効化 */
-}
-
-.touch-preview {
-    /* タッチプレビューの視覚効果も削除 */
-}
-
-/* Dragging styles moved to main definition for consistency */
-
-/* Improved mobile interactions */
-@media (max-width: 768px) {
     .puzzle-grid {
         width: 90vw;
         max-width: 90vw;
@@ -762,23 +309,17 @@ body {
     }
 
     .puzzle-pieces .puzzle-piece {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
     }
     
     .puzzle-piece:active {
         transform: scale(1.05);
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
     }
-}
 
-/* Disable text selection on mobile */
-.puzzle-container, .pieces-container {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    .btn, .difficulty-select {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
 }

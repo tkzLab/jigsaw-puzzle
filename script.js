@@ -154,6 +154,16 @@ class PuzzleUI {
     clearDropZoneHighlights() {
         document.querySelectorAll('.touch-drop-zone').forEach(slot => slot.classList.remove('touch-drop-zone'));
     }
+
+    updatePiecesContainerVisibility() {
+        const container = this.elements.piecesContainer;
+        const piecesDiv = container.querySelector('#puzzlePieces');
+        if (piecesDiv && piecesDiv.childElementCount === 0) {
+            container.classList.add('hidden');
+        } else {
+            container.classList.remove('hidden');
+        }
+    }
 }
 
 class NinjaPuzzleGame {
@@ -189,6 +199,7 @@ class NinjaPuzzleGame {
         this.ui.createPuzzlePieces(this.puzzleData);
         this.ui.createReferenceImage(this.puzzleImage.src);
         this.ui.hideCongratulations(); // Ensure it's hidden on init
+        this.ui.updatePiecesContainerVisibility();
     }
     
     setupEventListeners() {
@@ -305,14 +316,14 @@ class NinjaPuzzleGame {
             if (piece) {
                 touchedPiece = piece;
                 initialTouch = e.touches[0];
+                // With touch-action: none, we can immediately treat this as a drag.
                 piece.classList.add('dragging');
                 this.ui.createTouchFeedback(piece, initialTouch);
-                e.preventDefault();
             }
         }, { passive: false });
+
         document.addEventListener('touchmove', (e) => {
             if (touchedPiece && initialTouch) {
-                e.preventDefault();
                 const touch = e.touches[0];
                 if (this.ui.dragPreview) {
                     this.ui.dragPreview.style.left = `${touch.clientX - 40}px`;
@@ -321,54 +332,64 @@ class NinjaPuzzleGame {
                 const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
                 this.ui.updateDropZoneHighlight(elementBelow);
             }
-        }, { passive: false });
+        }, { passive: true }); // This can be passive now as we don't preventDefault
+
         document.addEventListener('touchend', (e) => {
             if (touchedPiece) {
-                e.preventDefault();
                 const touch = e.changedTouches[0];
                 const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-                if (elementBelow && elementBelow.classList.contains('puzzle-slot')) {
-                    this.handlePieceDrop(touchedPiece, elementBelow);
+                const slotBelow = elementBelow ? elementBelow.closest('.puzzle-slot') : null;
+
+                if (slotBelow) {
+                    this.handlePieceDrop(touchedPiece, slotBelow);
                 }
+                
                 this.ui.resetPieceStyles(touchedPiece);
                 this.ui.removeTouchFeedback();
                 this.ui.clearDropZoneHighlights();
+                
                 touchedPiece = null;
                 initialTouch = null;
             }
         });
     }
     
-    handlePieceDrop(pieceElement, slotElement) {
-        const pieceId = parseInt(pieceElement.dataset.pieceId);
-        const slotPosition = parseInt(slotElement.dataset.position);
-        const currentPosition = this.puzzleData[pieceId].currentPosition;
-        if (currentPosition !== null) {
-            const oldSlot = document.querySelector(`[data-position="${currentPosition}"]`);
-            if (oldSlot) {
-                oldSlot.classList.remove('occupied');
-                oldSlot.innerHTML = '';
-            }
+    handlePieceDrop(draggedElement, targetSlotElement) {
+        const draggedPieceId = parseInt(draggedElement.dataset.pieceId);
+        const draggedPieceData = this.puzzleData[draggedPieceId];
+        const sourceElement = draggedElement.parentElement;
+        const sourceIsSlot = sourceElement.classList.contains('puzzle-slot');
+
+        // Step 1: If the target slot is occupied, move the existing piece out to the container.
+        const existingPieceElement = targetSlotElement.querySelector('.puzzle-piece');
+        if (existingPieceElement) {
+            const existingPieceId = parseInt(existingPieceElement.dataset.pieceId);
+            const existingPieceData = this.puzzleData[existingPieceId];
+            
+            this.ui.elements.piecesContainer.appendChild(existingPieceElement);
+            existingPieceData.currentPosition = null;
+            existingPieceData.isPlaced = false;
         }
-        if (slotElement.classList.contains('occupied')) {
-            const existingPiece = slotElement.querySelector('.puzzle-piece');
-            if (existingPiece) {
-                const existingPieceId = parseInt(existingPiece.dataset.pieceId);
-                this.ui.elements.piecesContainer.appendChild(existingPiece);
-                this.puzzleData[existingPieceId].currentPosition = null;
-                this.puzzleData[existingPieceId].isPlaced = false;
-            }
+
+        // Step 2: If the dragged piece came from another slot, update that slot's state to be empty.
+        if (sourceIsSlot) {
+            sourceElement.classList.remove('occupied');
+            // Note: We don't clear innerHTML here because appendChild below will move the element.
         }
-        slotElement.innerHTML = '';
-        slotElement.appendChild(pieceElement);
-        slotElement.classList.add('occupied');
-        this.puzzleData[pieceId].currentPosition = slotPosition;
-        this.puzzleData[pieceId].isPlaced = true;
+
+        // Step 3: Move the dragged piece into the now-guaranteed-to-be-empty target slot.
+        targetSlotElement.appendChild(draggedElement);
+        targetSlotElement.classList.add('occupied');
+        draggedPieceData.currentPosition = parseInt(targetSlotElement.dataset.position);
+        draggedPieceData.isPlaced = true;
+
+        // Step 4: Check for win condition.
+        this.ui.updatePiecesContainerVisibility();
         if (this.checkWinCondition()) {
             this.gameCompleted = true;
             this.ui.showCongratulations();
             this.playSound('complete');
-        } else {
+        } else if (draggedPieceData.currentPosition === draggedPieceData.correctPosition) {
             this.playSound('correct');
         }
     }
@@ -391,6 +412,7 @@ class NinjaPuzzleGame {
         });
         const shuffled = Array.from(this.ui.elements.piecesContainer.children).sort(() => Math.random() - 0.5);
         shuffled.forEach(piece => this.ui.elements.piecesContainer.appendChild(piece));
+        this.ui.updatePiecesContainerVisibility();
     }
     
     resetGame() {

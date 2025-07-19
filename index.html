@@ -10,20 +10,12 @@
     <div class="game-container">
         <header class="game-header">
             <h1>🧩 ジグソーパズル 🧩</h1>
-            <div class="controls">
-                <select id="difficulty" class="difficulty-select">
-                    <option value="easy">かんたん (3×3)</option>
-                    <option value="medium">ふつう (4×4)</option>
-                    <option value="hard">むずかしい (5×5)</option>
-                </select>
-            </div>
         </header>
 
         <div class="game-area">
             <div class="puzzle-container">
                 <div id="puzzleGrid" class="puzzle-grid">
                     <div class="reference-container">
-                        <h3>お手本</h3>
                         <div class="reference-image">
                         </div>
                     </div>
@@ -32,6 +24,11 @@
                     <div id="puzzlePieces" class="puzzle-pieces"></div>
                 </div>
                 <div class="game-actions">
+                    <select id="difficulty" class="difficulty-select">
+                        <option value="easy">かんたん (3×3)</option>
+                        <option value="medium">ふつう (4×4)</option>
+                        <option value="hard">むずかしい (5×5)</option>
+                    </select>
                     <button id="shuffleBtn" class="btn btn-primary">シャッフル</button>
                     <button id="resetBtn" class="btn btn-secondary">リセット</button>
                     <input type="file" id="uploadInput" accept="image/*" style="display: none;">
