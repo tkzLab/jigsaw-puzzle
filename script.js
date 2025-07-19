@@ -356,20 +356,16 @@ class NinjaPuzzleGame {
     }
     
     createReferenceImage() {
-        const referenceContainer = document.querySelector('.ninja-cup-reference');
-        referenceContainer.innerHTML = '';
-        referenceContainer.className = 'ninja-cup-reference';
+        const referenceImageDiv = document.querySelector('.reference-image');
+        if (!referenceImageDiv) return;
+        
+        referenceImageDiv.innerHTML = '';
         
         const img = document.createElement('img');
         img.src = this.puzzleImage.src;
         img.className = 'reference-image-display';
-        img.style.width = '200px';
-        img.style.height = '200px';
-        img.style.objectFit = 'contain';
-        img.style.border = '2px solid #333';
-        img.style.borderRadius = '10px';
         
-        referenceContainer.appendChild(img);
+        referenceImageDiv.appendChild(img);
     }
     
     createPuzzleGrid() {
