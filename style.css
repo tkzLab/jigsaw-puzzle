@@ -507,8 +507,7 @@ body {
 }
 
 .puzzle-slot.occupied {
-    /* パーツが配置されても点線枠を維持 */
-    border: 1px dashed rgba(255, 255, 255, 0.3) !important;
+    /* 占有状態でも一切のスタイル変更なし */
 }
 
 .puzzle-slot.drop-zone {
@@ -581,18 +580,29 @@ body {
     border-radius: 0;
 }
 
-/* スロット内のパーツを点線枠まで拡大 */
+/* スロット内のパーツを点線枠と完全に同じサイズに */
 .puzzle-slot .puzzle-piece {
     width: 100% !important;
     height: 100% !important;
-    margin: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
 }
 
 .puzzle-slot .puzzle-piece img {
     width: 100% !important;
     height: 100% !important;
-    object-fit: cover;
+    object-fit: cover !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
 }
 
 /* Mobile touch improvements */
@@ -789,8 +799,7 @@ body {
 }
 
 .touch-preview {
-    border: 3px solid #2196F3 !important;
-    background: rgba(33, 150, 243, 0.1) !important;
+    /* タッチプレビューの視覚効果も削除 */
 }
 
 /* Dragging styles moved to main definition for consistency */

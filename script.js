@@ -390,7 +390,6 @@ class NinjaPuzzleGame {
         }
         
         // 全スロットの状態をリセット
-        console.log(`🔍 Created ${this.gridSize * this.gridSize} clean slots`);
     }
     
     createPuzzlePieces() {
@@ -409,7 +408,6 @@ class NinjaPuzzleGame {
             // パーツの初期位置を明確にリセット
             piece.currentPosition = null;
             piece.isPlaced = false;
-            console.log(`🔍 Created piece ${piece.id} with initial position: ${piece.currentPosition}`);
             
             // Create image element for the piece
             const img = document.createElement('img');
@@ -645,26 +643,20 @@ class NinjaPuzzleGame {
         const pieceId = parseInt(pieceElement.dataset.pieceId);
         const slotPosition = parseInt(slotElement.dataset.position);
         
-        console.log(`🔍 Dropping piece ${pieceId} to slot ${slotPosition}`);
-        
         // パーツの元の位置を取得してクリーンアップ
         const currentPosition = this.puzzleData[pieceId].currentPosition;
-        console.log(`🔍 Current position of piece ${pieceId}: ${currentPosition}`);
         
         if (currentPosition !== null) {
             // 元のスロットから占有状態を削除
             const oldSlot = document.querySelector(`[data-position="${currentPosition}"]`);
-            console.log(`🔍 Found old slot:`, oldSlot);
             if (oldSlot) {
                 // 元のスロットからパーツも物理的に削除
                 const oldPiece = oldSlot.querySelector('.puzzle-piece');
                 if (oldPiece && oldPiece !== pieceElement) {
-                    console.log(`🔍 Removing old piece from slot ${currentPosition}`);
                     oldPiece.remove();
                 }
-                oldSlot.classList.remove('occupied', 'correct-placement');
+                oldSlot.classList.remove('occupied');
                 oldSlot.innerHTML = ''; // 完全にクリア
-                console.log(`✅ Cleaned old slot ${currentPosition}`);
             }
         }
         
@@ -685,20 +677,12 @@ class NinjaPuzzleGame {
         slotElement.innerHTML = '';
         slotElement.appendChild(pieceElement);
         slotElement.classList.add('occupied');
-        console.log(`✅ Placed piece ${pieceId} in slot ${slotPosition}`);
         
         // パズルデータを更新
         this.puzzleData[pieceId].currentPosition = slotPosition;
         this.puzzleData[pieceId].isPlaced = true;
-        console.log(`✅ Updated piece ${pieceId} data: position=${slotPosition}, isPlaced=${this.puzzleData[pieceId].isPlaced}`);
         
-        // Add special effect for correct placement
-        if (pieceId === slotPosition) {
-            slotElement.classList.add('correct-placement');
-            this.showCorrectPlacementEffect(slotElement);
-        } else {
-            slotElement.classList.remove('correct-placement');
-        }
+        // 正解配置時の視覚効果を完全削除
         
         // Check for game completion
         if (this.checkWinCondition()) {
@@ -707,26 +691,7 @@ class NinjaPuzzleGame {
         }
     }
     
-    showCorrectPlacementEffect(element) {
-        element.style.animation = 'correctPlacement 0.5s ease-out';
-        setTimeout(() => {
-            element.style.animation = '';
-        }, 500);
-        
-        // Add the animation to CSS if not already present
-        if (!document.querySelector('#correctPlacementAnimation')) {
-            const style = document.createElement('style');
-            style.id = 'correctPlacementAnimation';
-            style.textContent = `
-                @keyframes correctPlacement {
-                    0% { background-color: transparent; }
-                    50% { background-color: rgba(76, 175, 80, 0.3); }
-                    100% { background-color: transparent; }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-    }
+    // showCorrectPlacementEffect メソッドを完全削除
     
     checkWinCondition() {
         return this.puzzleData.every(piece => 
@@ -747,7 +712,7 @@ class NinjaPuzzleGame {
                 this.puzzleData[pieceId].currentPosition = null;
                 this.puzzleData[pieceId].isPlaced = false;
             }
-            slot.classList.remove('occupied', 'correct-placement');
+            slot.classList.remove('occupied');
             slot.innerHTML = '';
         });
         
