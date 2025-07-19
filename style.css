@@ -195,10 +195,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    opacity: 1.0;
-    background: rgba(255, 0, 0, 0.3);
-    border: 3px solid red;
-    z-index: 1000;
+    opacity: 0.5;
 }
 
 .reference-image img {
