@@ -492,9 +492,18 @@ body {
     -webkit-tap-highlight-color: transparent;
     touch-action: none;
     position: relative;
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     flex-shrink: 0;
+}
+
+.game-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 20px;
 }
 
 .puzzle-piece img {
@@ -689,8 +698,14 @@ body {
         grid-template-columns: 1fr;
     }
     
+    .game-header {
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+    
     .game-header h1 {
-        font-size: 2em;
+        font-size: 1.5em;
+        margin-bottom: 8px;
     }
     
     .controls {
@@ -720,19 +735,6 @@ body {
     .ninja-cup-reference {
         transform: scale(0.6);
     }
-    
-    .puzzle-slot {
-        /* 固定サイズでパーツと完全一致 */
-        width: 40px;
-        height: 40px;
-        min-width: 40px;
-        min-height: 40px;
-        max-width: 40px;
-        max-height: 40px;
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
 }
 
 /* Touch interaction styles */
@@ -748,22 +750,6 @@ body {
 
 /* Improved mobile interactions */
 @media (max-width: 768px) {
-    .puzzle-slot {
-        border-width: 2px;
-        transition: all 0.2s ease;
-        /* 固定サイズでパーツと完全一致 */
-        width: 45px;
-        height: 45px;
-        min-width: 45px;
-        min-height: 45px;
-        max-width: 45px;
-        max-height: 45px;
-        overflow: hidden;
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    
     .puzzle-slot.drop-zone, 
     .puzzle-slot.touch-drop-zone {
         /* 枠を完全に無効化 */
@@ -771,12 +757,8 @@ body {
     
     .puzzle-piece {
         transition: all 0.2s ease;
-        min-width: 40px;
-        min-height: 40px;
-        max-width: 40px;
-        max-height: 40px;
-        width: 40px;
-        height: 40px;
+        width: 60px;
+        height: 60px;
     }
     
     /* Dragging styles inherited from main definition */

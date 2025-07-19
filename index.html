@@ -17,10 +17,6 @@
                     <option value="medium">ふつう (4×4)</option>
                     <option value="hard">むずかしい (5×5)</option>
                 </select>
-                <button id="shuffleBtn" class="btn btn-primary">シャッフル</button>
-                <button id="resetBtn" class="btn btn-secondary">リセット</button>
-                <input type="file" id="uploadInput" accept="image/*" style="display: none;">
-                <label for="uploadInput" class="btn btn-upload">画像をアップロード</label>
             </div>
         </header>
 
@@ -36,6 +32,12 @@
                 <div id="piecesContainer" class="pieces-container">
                     <h3>パズルピース</h3>
                     <div id="puzzlePieces" class="puzzle-pieces"></div>
+                </div>
+                <div class="game-actions">
+                    <button id="shuffleBtn" class="btn btn-primary">シャッフル</button>
+                    <button id="resetBtn" class="btn btn-secondary">リセット</button>
+                    <input type="file" id="uploadInput" accept="image/*" style="display: none;">
+                    <label for="uploadInput" class="btn btn-upload">画像をアップロード</label>
                 </div>
             </div>
         </div>
