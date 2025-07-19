@@ -569,12 +569,27 @@ body {
     -webkit-tap-highlight-color: transparent;
     touch-action: none;
     position: relative;
+    /* スロットと同じサイズに統一 */
+    min-width: 60px;
+    min-height: 60px;
+    width: 100%;
+    height: 100%;
+}
+
+.puzzle-piece img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    border-radius: 0;
 }
 
 /* Mobile touch improvements */
 @media (max-width: 768px) {
     .puzzle-piece {
-        min-height: 50px;
+        min-width: 45px;
+        min-height: 45px;
+        width: 100%;
+        height: 100%;
     }
     
     .puzzle-piece:active {
@@ -591,7 +606,7 @@ body {
 
 .puzzle-piece.dragging {
     cursor: grabbing !important;
-    opacity: 0.7 !important;
+    opacity: 0.8 !important;
     z-index: 1000 !important;
     transform: scale(0.95) !important;
     transition: none !important;
@@ -749,6 +764,11 @@ body {
     .ninja-cup-reference {
         transform: scale(0.6);
     }
+    
+    .puzzle-slot {
+        min-width: 40px;
+        min-height: 40px;
+    }
 }
 
 /* Touch interaction styles */
@@ -783,8 +803,12 @@ body {
     
     .puzzle-piece {
         transition: all 0.2s ease;
-        max-width: 50px;
-        max-height: 50px;
+        min-width: 40px;
+        min-height: 40px;
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        max-height: none;
     }
     
     /* Dragging styles inherited from main definition */
