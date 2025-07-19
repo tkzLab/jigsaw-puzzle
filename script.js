@@ -94,6 +94,9 @@ class NinjaPuzzleGame {
         const piecesContainer = document.getElementById('puzzlePieces');
         piecesContainer.innerHTML = '';
         
+        // Create reference grid to show the correct solution
+        this.createReferenceGrid();
+        
         // Shuffle pieces for initial placement
         const shuffledPieces = [...this.puzzleData].sort(() => Math.random() - 0.5);
         
@@ -105,6 +108,20 @@ class NinjaPuzzleGame {
             pieceElement.textContent = piece.content;
             piecesContainer.appendChild(pieceElement);
         });
+    }
+    
+    createReferenceGrid() {
+        const referenceContainer = document.querySelector('.ninja-cup-reference');
+        referenceContainer.innerHTML = '';
+        referenceContainer.className = `ninja-cup-reference reference-grid size-${this.gridSize}`;
+        
+        // Create reference grid with correct pieces
+        for (let i = 0; i < this.gridSize * this.gridSize; i++) {
+            const refPiece = document.createElement('div');
+            refPiece.className = 'reference-piece';
+            refPiece.textContent = this.puzzleData[i].content;
+            referenceContainer.appendChild(refPiece);
+        }
     }
     
     setupDragAndDrop() {
@@ -332,7 +349,6 @@ class NinjaPuzzleGame {
         this.generatePuzzleData();
         this.createPuzzleGrid();
         this.createPuzzlePieces();
-        this.setupDragAndDrop();
         this.updateProgress();
         this.hideCongratulations();
     }
