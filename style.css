@@ -195,7 +195,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    opacity: 0.5;
+    opacity: 0.3;
 }
 
 .reference-image img {
@@ -590,9 +590,13 @@ body {
 }
 
 .puzzle-piece.dragging {
-    cursor: grabbing;
-    opacity: 0.8;
-    z-index: 1000;
+    cursor: grabbing !important;
+    opacity: 0.7 !important;
+    z-index: 1000 !important;
+    transform: scale(0.95) !important;
+    transition: none !important;
+    pointer-events: none !important;
+    will-change: transform, opacity;
 }
 
 /* Game Stats */
@@ -760,13 +764,7 @@ body {
     background: rgba(33, 150, 243, 0.1) !important;
 }
 
-.puzzle-piece.dragging {
-    opacity: 0.7 !important;
-    transform: scale(0.9) !important;
-    z-index: 1000 !important;
-    pointer-events: none !important;
-    transition: none !important;
-}
+/* Dragging styles moved to main definition for consistency */
 
 /* Improved mobile interactions */
 @media (max-width: 768px) {
@@ -789,11 +787,7 @@ body {
         max-height: 50px;
     }
     
-    .puzzle-piece.dragging {
-        opacity: 0.7 !important;
-        transform: scale(0.85) !important;
-        transition: none !important;
-    }
+    /* Dragging styles inherited from main definition */
 }
 
 /* Disable text selection on mobile */

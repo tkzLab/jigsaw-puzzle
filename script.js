@@ -435,10 +435,7 @@ class NinjaPuzzleGame {
         // Drag end
         document.addEventListener('dragend', (e) => {
             if (e.target.classList.contains('puzzle-piece')) {
-                e.target.classList.remove('dragging');
-                // Force visual update
-                e.target.style.transform = '';
-                e.target.style.opacity = '';
+                this.resetPieceStyles(e.target);
                 draggedElement = null;
             }
         });
@@ -519,13 +516,8 @@ class NinjaPuzzleGame {
                     this.handlePieceDrop(touchedPiece, elementBelow);
                 }
                 
-                // Comprehensive cleanup
-                touchedPiece.classList.remove('dragging');
-                touchedPiece.style.transform = '';
-                touchedPiece.style.opacity = '';
-                touchedPiece.style.zIndex = '';
-                touchedPiece.style.position = '';
-                
+                // Comprehensive cleanup using unified method
+                this.resetPieceStyles(touchedPiece);
                 this.removeTouchFeedback();
                 this.clearDropZoneHighlights();
                 
@@ -538,9 +530,7 @@ class NinjaPuzzleGame {
                 setTimeout(() => {
                     document.querySelectorAll('.puzzle-piece').forEach(piece => {
                         if (!piece.parentElement.classList.contains('puzzle-slot')) {
-                            piece.style.transform = '';
-                            piece.style.opacity = '';
-                            piece.style.zIndex = '';
+                            this.resetPieceStyles(piece);
                         }
                     });
                 }, 100);
@@ -614,6 +604,32 @@ class NinjaPuzzleGame {
     clearDropZoneHighlights() {
         document.querySelectorAll('.touch-drop-zone').forEach(slot => {
             slot.classList.remove('touch-drop-zone');
+        });
+    }
+    
+    resetPieceStyles(piece) {
+        // 段階的にスタイルをリセット
+        piece.classList.remove('dragging');
+        
+        // 即座にインラインスタイルをクリア
+        piece.style.transform = '';
+        piece.style.opacity = '';
+        piece.style.zIndex = '';
+        piece.style.position = '';
+        piece.style.pointerEvents = '';
+        piece.style.willChange = '';
+        piece.style.transition = '';
+        
+        // 強制的にブラウザに再描画を促す
+        piece.offsetHeight; // Force reflow
+        
+        // 追加の遅延クリーンアップ
+        requestAnimationFrame(() => {
+            piece.style.cssText = piece.style.cssText.replace(/transform[^;]*;?/g, '');
+            piece.style.cssText = piece.style.cssText.replace(/opacity[^;]*;?/g, '');
+            
+            // 最終的な強制再描画
+            piece.offsetHeight; // Force reflow again
         });
     }
     
