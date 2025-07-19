@@ -191,8 +191,8 @@ class NinjaPuzzleGame {
             const col = i % this.gridSize;
             
             const canvas = document.createElement('canvas');
-            canvas.width = pieceWidth + 40; // Extra space for tabs
-            canvas.height = pieceHeight + 40;
+            canvas.width = pieceWidth + 20; // Reduced extra space for tabs
+            canvas.height = pieceHeight + 20;
             const ctx = canvas.getContext('2d');
             
             // Create puzzle piece shape with tabs
@@ -203,7 +203,7 @@ class NinjaPuzzleGame {
             ctx.drawImage(
                 this.puzzleImage,
                 col * pieceWidth, row * pieceHeight, pieceWidth, pieceHeight,
-                20, 20, pieceWidth, pieceHeight
+                10, 10, pieceWidth, pieceHeight
             );
             
             this.puzzleData[i].imageData = canvas.toDataURL();
@@ -214,77 +214,77 @@ class NinjaPuzzleGame {
     createPuzzlePieceShape(ctx, width, height, row, col) {
         const centerX = width / 2;
         const centerY = height / 2;
-        const tabSize = 15;
-        const pieceWidth = width - 40;
-        const pieceHeight = height - 40;
+        const tabSize = 8;
+        const pieceWidth = width - 20;
+        const pieceHeight = height - 20;
         
         ctx.beginPath();
         
         // Start from top-left
-        ctx.moveTo(20, 20);
+        ctx.moveTo(10, 10);
         
         // Top edge with potential tab
         if (row === 0) {
             // Top edge - no tab
-            ctx.lineTo(width - 20, 20);
+            ctx.lineTo(width - 10, 10);
         } else {
             // Top edge with tab
             const hasTab = (row + col) % 2 === 0;
-            ctx.lineTo(centerX - tabSize, 20);
+            ctx.lineTo(centerX - tabSize, 10);
             if (hasTab) {
-                ctx.arc(centerX, 20, tabSize, Math.PI, 0, false);
+                ctx.arc(centerX, 10, tabSize, Math.PI, 0, false);
             } else {
-                ctx.arc(centerX, 20, tabSize, 0, Math.PI, false);
+                ctx.arc(centerX, 10, tabSize, 0, Math.PI, false);
             }
-            ctx.lineTo(width - 20, 20);
+            ctx.lineTo(width - 10, 10);
         }
         
         // Right edge with potential tab
         if (col === this.gridSize - 1) {
             // Right edge - no tab
-            ctx.lineTo(width - 20, height - 20);
+            ctx.lineTo(width - 10, height - 10);
         } else {
             // Right edge with tab
             const hasTab = (row + col + 1) % 2 === 0;
-            ctx.lineTo(width - 20, centerY - tabSize);
+            ctx.lineTo(width - 10, centerY - tabSize);
             if (hasTab) {
-                ctx.arc(width - 20, centerY, tabSize, -Math.PI/2, Math.PI/2, false);
+                ctx.arc(width - 10, centerY, tabSize, -Math.PI/2, Math.PI/2, false);
             } else {
-                ctx.arc(width - 20, centerY, tabSize, Math.PI/2, -Math.PI/2, false);
+                ctx.arc(width - 10, centerY, tabSize, Math.PI/2, -Math.PI/2, false);
             }
-            ctx.lineTo(width - 20, height - 20);
+            ctx.lineTo(width - 10, height - 10);
         }
         
         // Bottom edge with potential tab
         if (row === this.gridSize - 1) {
             // Bottom edge - no tab
-            ctx.lineTo(20, height - 20);
+            ctx.lineTo(10, height - 10);
         } else {
             // Bottom edge with tab
             const hasTab = (row + col + 2) % 2 === 0;
-            ctx.lineTo(centerX + tabSize, height - 20);
+            ctx.lineTo(centerX + tabSize, height - 10);
             if (hasTab) {
-                ctx.arc(centerX, height - 20, tabSize, 0, Math.PI, false);
+                ctx.arc(centerX, height - 10, tabSize, 0, Math.PI, false);
             } else {
-                ctx.arc(centerX, height - 20, tabSize, Math.PI, 0, false);
+                ctx.arc(centerX, height - 10, tabSize, Math.PI, 0, false);
             }
-            ctx.lineTo(20, height - 20);
+            ctx.lineTo(10, height - 10);
         }
         
         // Left edge with potential tab
         if (col === 0) {
             // Left edge - no tab
-            ctx.lineTo(20, 20);
+            ctx.lineTo(10, 10);
         } else {
             // Left edge with tab
             const hasTab = (row + col + 3) % 2 === 0;
-            ctx.lineTo(20, centerY + tabSize);
+            ctx.lineTo(10, centerY + tabSize);
             if (hasTab) {
-                ctx.arc(20, centerY, tabSize, Math.PI/2, -Math.PI/2, false);
+                ctx.arc(10, centerY, tabSize, Math.PI/2, -Math.PI/2, false);
             } else {
-                ctx.arc(20, centerY, tabSize, -Math.PI/2, Math.PI/2, false);
+                ctx.arc(10, centerY, tabSize, -Math.PI/2, Math.PI/2, false);
             }
-            ctx.lineTo(20, 20);
+            ctx.lineTo(10, 10);
         }
         
         ctx.closePath();
@@ -518,6 +518,7 @@ class NinjaPuzzleGame {
         
         document.addEventListener('touchend', (e) => {
             if (touchedPiece) {
+                e.preventDefault();
                 const touch = e.changedTouches[0];
                 const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
                 
@@ -525,14 +526,31 @@ class NinjaPuzzleGame {
                     this.handlePieceDrop(touchedPiece, elementBelow);
                 }
                 
-                // Clean up
+                // Comprehensive cleanup
                 touchedPiece.classList.remove('dragging');
+                touchedPiece.style.transform = '';
+                touchedPiece.style.opacity = '';
+                touchedPiece.style.zIndex = '';
+                touchedPiece.style.position = '';
+                
                 this.removeTouchFeedback();
                 this.clearDropZoneHighlights();
                 
+                // Reset variables
                 touchedPiece = null;
                 initialTouch = null;
                 dragPreview = null;
+                
+                // Additional cleanup after a short delay
+                setTimeout(() => {
+                    document.querySelectorAll('.puzzle-piece').forEach(piece => {
+                        if (!piece.parentElement.classList.contains('puzzle-slot')) {
+                            piece.style.transform = '';
+                            piece.style.opacity = '';
+                            piece.style.zIndex = '';
+                        }
+                    });
+                }, 100);
             }
         });
     }
@@ -563,15 +581,31 @@ class NinjaPuzzleGame {
             dragPreview = null;
         }
         
-        // Remove any remaining dragging classes
+        // Remove any remaining dragging classes and reset styles
         document.querySelectorAll('.puzzle-piece.dragging').forEach(piece => {
             piece.classList.remove('dragging');
+            // Reset all transform and opacity properties
+            piece.style.transform = '';
+            piece.style.opacity = '';
+            piece.style.zIndex = '';
+            piece.style.position = '';
+            piece.style.left = '';
+            piece.style.top = '';
         });
         
-        // Force redraw to prevent visual artifacts
-        document.body.style.display = 'none';
-        document.body.offsetHeight; // Trigger reflow
-        document.body.style.display = '';
+        // Clear any lingering touch effects
+        document.querySelectorAll('.puzzle-piece').forEach(piece => {
+            piece.style.transform = '';
+            piece.style.opacity = '';
+            piece.style.zIndex = '';
+        });
+        
+        // Force complete redraw
+        requestAnimationFrame(() => {
+            document.body.style.display = 'none';
+            document.body.offsetHeight; // Trigger reflow
+            document.body.style.display = '';
+        });
     }
     
     updateDropZoneHighlight(element) {
