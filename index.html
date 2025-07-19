@@ -10,6 +10,7 @@
     <div class="game-container">
         <header class="game-header">
             <h1>🧩 ジグソーパズル 🧩</h1>
+            <div class="version">v2.1.0</div>
             <div class="controls">
                 <select id="difficulty" class="difficulty-select">
                     <option value="easy">かんたん (3×3)</option>
@@ -38,23 +39,13 @@
             </div>
         </div>
 
-        <div class="game-stats">
-            <div class="stat">
-                <span class="stat-label">時間:</span>
-                <span id="timer" class="stat-value">00:00</span>
-            </div>
-            <div class="stat">
-                <span class="stat-label">完成:</span>
-                <span id="progress" class="stat-value">0%</span>
-            </div>
-        </div>
+
 
         <div id="congratulations" class="congratulations hidden">
             <div class="congrats-content">
                 <h2>🎉 おめでとう！ 🎉</h2>
                 <p>パズルが完成しました！</p>
-                <p>時間: <span id="finalTime"></span></p>
-                <div class="celebration-ninja">🥷☕✨</div>
+                <div class="celebration-ninja">🧩✨</div>
                 <button id="playAgainBtn" class="btn btn-primary">もう一度プレイ</button>
             </div>
         </div>

@@ -3,8 +3,6 @@ class NinjaPuzzleGame {
         this.currentDifficulty = 'easy';
         this.gridSize = 3;
         this.puzzleData = [];
-        this.startTime = null;
-        this.timerInterval = null;
         this.gameCompleted = false;
         this.puzzleImage = null;
         this.imageLoaded = false;
@@ -123,7 +121,6 @@ class NinjaPuzzleGame {
         this.createPuzzleGrid();
         this.createPuzzlePieces();
         this.createReferenceImage();
-        this.resetTimer();
     }
     
     setupEventListeners() {
@@ -427,11 +424,6 @@ class NinjaPuzzleGame {
             if (e.target.classList.contains('puzzle-piece')) {
                 draggedElement = e.target;
                 e.target.classList.add('dragging');
-                
-                // Start timer on first move
-                if (!this.startTime && !this.gameCompleted) {
-                    this.startTimer();
-                }
             }
         });
         
@@ -489,10 +481,6 @@ class NinjaPuzzleGame {
                 
                 // Create visual feedback for mobile
                 this.createTouchFeedback(piece, initialTouch);
-                
-                if (!this.startTime && !this.gameCompleted) {
-                    this.startTimer();
-                }
                 
                 e.preventDefault();
             }
@@ -657,10 +645,8 @@ class NinjaPuzzleGame {
         }
         
         // Check for game completion
-        this.updateProgress();
         if (this.checkWinCondition()) {
             this.gameCompleted = true;
-            this.stopTimer();
             this.showCongratulations();
         }
     }
@@ -686,51 +672,10 @@ class NinjaPuzzleGame {
         }
     }
     
-    updateProgress() {
-        const correctPieces = this.puzzleData.filter(piece => 
-            piece.isPlaced && piece.currentPosition === piece.correctPosition
-        ).length;
-        
-        const totalPieces = this.puzzleData.length;
-        const progressPercentage = Math.round((correctPieces / totalPieces) * 100);
-        
-        document.getElementById('progress').textContent = `${progressPercentage}%`;
-    }
-    
     checkWinCondition() {
         return this.puzzleData.every(piece => 
             piece.isPlaced && piece.currentPosition === piece.correctPosition
         );
-    }
-    
-    startTimer() {
-        this.startTime = Date.now();
-        this.timerInterval = setInterval(() => {
-            this.updateTimer();
-        }, 1000);
-    }
-    
-    updateTimer() {
-        if (this.startTime) {
-            const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
-            const minutes = Math.floor(elapsed / 60);
-            const seconds = elapsed % 60;
-            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            document.getElementById('timer').textContent = timeString;
-        }
-    }
-    
-    stopTimer() {
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-            this.timerInterval = null;
-        }
-    }
-    
-    resetTimer() {
-        this.stopTimer();
-        this.startTime = null;
-        document.getElementById('timer').textContent = '00:00';
     }
     
     shufflePieces() {
@@ -753,24 +698,18 @@ class NinjaPuzzleGame {
         // Shuffle pieces
         const shuffled = pieces.sort(() => Math.random() - 0.5);
         shuffled.forEach(piece => piecesContainer.appendChild(piece));
-        
-        this.updateProgress();
     }
     
     resetGame() {
         this.gameCompleted = false;
-        this.resetTimer();
         this.setGridSize();
         this.generatePuzzleData();
         this.createPuzzleGrid();
         this.createPuzzlePieces();
-        this.updateProgress();
         this.hideCongratulations();
     }
     
     showCongratulations() {
-        const finalTime = document.getElementById('timer').textContent;
-        document.getElementById('finalTime').textContent = finalTime;
         document.getElementById('congratulations').classList.remove('hidden');
         
         // Add celebration effects
