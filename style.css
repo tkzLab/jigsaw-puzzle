@@ -131,6 +131,22 @@ body {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* ファイルアップロード */
+.file-input {
+    display: none;
+}
+
+.btn-upload {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    margin-right: 10px;
+}
+
+.btn-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
 .difficulty-select {
     padding: 12px 20px;
     border: 2px solid #ddd;

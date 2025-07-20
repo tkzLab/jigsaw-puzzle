@@ -139,6 +139,11 @@ class NinjaPuzzleGame {
         document.getElementById('resetBtn').addEventListener('click', () => {
             this.resetGame();
         });
+
+        // Image upload
+        document.getElementById('imageUpload').addEventListener('change', (e) => {
+            this.handleImageUpload(e);
+        });
         
         document.getElementById('playAgainBtn').addEventListener('click', () => {
             this.resetGame();
@@ -692,6 +697,63 @@ class NinjaPuzzleGame {
     }
     
     // showCorrectPlacementEffect メソッドを完全削除
+
+    handleImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // ファイルタイプチェック
+        if (!file.type.startsWith('image/')) {
+            alert('画像ファイルを選択してください。');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            this.processUploadedImage(e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    processUploadedImage(imageSrc) {
+        const img = new Image();
+        img.onload = () => {
+            // 正方形にトリミング
+            const squareImage = this.cropToSquare(img);
+            
+            // パズル画像として設定
+            this.puzzleImage = new Image();
+            this.puzzleImage.onload = () => {
+                this.imageLoaded = true;
+                this.resetGame(); // 新しい画像でゲームリセット
+            };
+            this.puzzleImage.src = squareImage;
+        };
+        img.src = imageSrc;
+    }
+
+    cropToSquare(img) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 正方形のサイズを決定（短辺に合わせる）
+        const size = Math.min(img.width, img.height);
+        canvas.width = size;
+        canvas.height = size;
+        
+        // 中央からクロップする座標を計算
+        const cropX = (img.width - size) / 2;
+        const cropY = (img.height - size) / 2;
+        
+        // 中央部分を正方形にクロップ
+        ctx.drawImage(
+            img,
+            cropX, cropY, size, size,  // ソース座標とサイズ
+            0, 0, size, size           // 描画先座標とサイズ
+        );
+        
+        return canvas.toDataURL('image/jpeg', 0.9);
+    }
     
     checkWinCondition() {
         return this.puzzleData.every(piece => 
