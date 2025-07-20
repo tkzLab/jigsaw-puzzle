@@ -404,6 +404,7 @@ class NinjaPuzzleGame {
         document.addEventListener('touchstart', (e) => {
             const piece = e.target.closest('.puzzle-piece');
             if (piece) {
+                console.log('Puzzle piece touched! The connection is working.'); // Add this line for debugging
                 touchedPiece = piece;
                 initialTouch = e.touches[0];
                 piece.classList.add('dragging');
