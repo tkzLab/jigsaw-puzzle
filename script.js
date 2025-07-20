@@ -220,20 +220,52 @@ class NinjaPuzzleGame {
         this.setupDragAndDrop();
     }
     
-    loadUserImage(e) {
+    async cropImageToSquare(imageSrc) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const size = Math.min(img.width, img.height);
+                canvas.width = size;
+                canvas.height = size;
+                const sx = (img.width - size) / 2;
+                const sy = (img.height - size) / 2;
+                ctx.drawImage(img, sx, sy, size, size, 0, 0, size, size);
+                resolve(canvas.toDataURL());
+            };
+            img.onerror = reject;
+            img.src = imageSrc;
+        });
+    }
+
+    async loadUserImage(e) {
         const file = e.target.files[0];
         if (file && file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                this.puzzleImage.onload = () => {
-                    this.imageLoaded = true;
-                    this.resetGame();
+            try {
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    try {
+                        const originalImageSrc = event.target.result;
+                        const squaredImageSrc = await this.cropImageToSquare(originalImageSrc);
+                        
+                        this.puzzleImage.onload = () => {
+                            this.imageLoaded = true;
+                            this.resetGame();
+                        };
+                        this.puzzleImage.src = squaredImageSrc;
+                    } catch (error) {
+                        console.error('Error processing image:', error);
+                        alert('画像の処理中にエラーが発生しました。');
+                    }
                 };
-                this.puzzleImage.src = event.target.result; // Use dataURL
-            };
-            reader.readAsDataURL(file);
+                reader.readAsDataURL(file);
+            } catch (error) {
+                console.error('Error reading file:', error);
+                alert('ファイルの読み込み中にエラーが発生しました。');
+            }
         } else {
-            alert('画像ファイルを選択してく���さい。');
+            alert('画像ファイルを選択してください。');
         }
     }
     
