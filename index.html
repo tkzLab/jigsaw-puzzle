@@ -10,13 +10,15 @@
     <div class="game-container">
         <header class="game-header">
             <h1>🧩 ジグソーパズル 🧩</h1>
-            <div class="version">v2.7.2</div>
+            <div class="version">v2.8.0</div>
             <div class="controls">
                 <select id="difficulty" class="difficulty-select">
                     <option value="easy">かんたん (3×3)</option>
                     <option value="medium">ふつう (4×4)</option>
                     <option value="hard">むずかしい (5×5)</option>
                 </select>
+                <input type="file" id="imageUpload" accept="image/*" class="file-input">
+                <label for="imageUpload" class="btn btn-upload">画像をアップロード</label>
                 <button id="shuffleBtn" class="btn btn-primary">シャッフル</button>
                 <button id="resetBtn" class="btn btn-secondary">リセット</button>
             </div>
