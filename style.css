@@ -7,7 +7,7 @@
 
 body {
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #fff;
     min-height: 100vh;
     color: #333;
     overflow-x: hidden;
@@ -26,15 +26,13 @@ body {
 /* Header Styles */
 .game-header {
     padding: 10px 0;
-    margin-bottom: 10px;
 }
 
 .game-header h1 {
     text-align: center;
     font-size: 2em;
-    color: #fff;
+    color: #333;
     margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .btn {
@@ -84,10 +82,10 @@ body {
     flex-direction: column;
     align-items: center; /* これを追加して中央揃えにする */
     gap: 10px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    background: none;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
     width: 100%;
     position: relative;
 }
@@ -101,17 +99,18 @@ body {
     padding: 0;
     margin: 0;
     aspect-ratio: 1;
-    max-width: 90vw;
-    width: 500px;
-    max-height: 90vh;
+    width: min(90vw, 90vh, 500px);
+    height: min(90vw, 90vh, 500px);
+    max-height: none; /* 既存のmax-heightを削除 */
     box-sizing: border-box;
     position: relative;
     z-index: 2;
+    touch-action: none; /* Prevent page scroll on the grid */
 }
 
-.puzzle-grid.size-3 { grid-template-columns: repeat(3, 1fr); }
-.puzzle-grid.size-4 { grid-template-columns: repeat(4, 1fr); }
-.puzzle-grid.size-5 { grid-template-columns: repeat(5, 1fr); }
+.puzzle-grid.size-3 { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); }
+.puzzle-grid.size-4 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); }
+.puzzle-grid.size-5 { grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); }
 
 .reference-container {
     position: absolute;
@@ -120,7 +119,7 @@ body {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 1;
+    z-index: 2; /* Should be above the slots */
 }
 
 .reference-image {
@@ -144,11 +143,11 @@ body {
     transition: all 0.3s ease;
     overflow: hidden;
     position: relative;
-    z-index: 2;
+    z-index: 1; /* Should be below the reference image */
 }
 
 .puzzle-slot.occupied {
-    background-color: #fff;
+    background-color: transparent; /* Make transparent to see reference image behind pieces if needed */
     border: none;
 }
 
@@ -189,10 +188,19 @@ body {
 
 .puzzle-slot .puzzle-piece {
     width: 100%;
-    height: 100%;
+    height: auto;
+    aspect-ratio: 1;
     border: none;
     box-shadow: none;
     border-radius: 0;
+    position: relative; /* Add position to enable z-index */
+    z-index: 3;       /* Ensure pieces are on top of the reference image */
+}
+
+.puzzle-slot .puzzle-piece img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .puzzle-piece:hover {
@@ -213,7 +221,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
+    gap: 5px;
     flex-wrap: wrap;
 }
 
@@ -224,21 +232,7 @@ body {
 
 /* Congratulations Modal */
 .congratulations {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
-    backdrop-filter: blur(5px);
-}
-
-.congratulations.hidden {
-    display: none;
+    display: none; /* ダイアログを完全に無効化 */
 }
 
 .congrats-content {
@@ -249,6 +243,52 @@ body {
     max-width: 400px;
     animation: bounceIn 0.6s ease-out;
 }
+
+/* New In-Game Celebration Styles */
+.in-game-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.85);
+    color: #333;
+    font-size: 2.5em;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px 40px;
+    border-radius: 20px;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0;
+    animation: fadeInOut 3s ease-in-out forwards;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    20%, 80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.highlight-action {
+    animation: pulse 1.5s infinite;
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7);
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7);
+    }
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px 15px rgba(255, 107, 107, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 107, 107, 0);
+    }
+}
+
 
 .congrats-content h2 {
     font-size: 2.5em;
@@ -288,7 +328,6 @@ body {
 
     .game-header {
         padding: 10px;
-        margin-bottom: 10px;
     }
     
     .game-header h1 {
@@ -324,3 +363,4 @@ body {
         font-size: 13px;
     }
 }
+

@@ -7,13 +7,61 @@ const DIFFICULTIES = {
 
 const IMAGE_SIZE = 300; // The size of the puzzle image
 
+// --- SoundManager Class ---
+// A robust and simple way to handle audio playback using <audio> elements.
+class SoundManager {
+    constructor() {
+        this.sounds = {};
+        this.isUnlocked = false;
+
+        // Base64 encoded audio data to avoid external file dependencies.
+        const audioData = {
+            correct: 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA',
+            complete: 'data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhWAAAAAEACgAIAAYABAAKAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAgABgAEAAoACAAEAAg-…'
+        };
+
+        for (const key in audioData) {
+            const audio = new Audio();
+            audio.src = audioData[key];
+            this.sounds[key] = audio;
+        }
+
+        // Unlock audio on the first user interaction
+        this.unlockAudio = () => {
+            if (!this.isUnlocked) {
+                for (const key in this.sounds) {
+                    this.sounds[key].play().catch(() => {});
+                    this.sounds[key].pause();
+                    this.sounds[key].currentTime = 0;
+                }
+                this.isUnlocked = true;
+            }
+            // Remove the event listener after it has run once.
+            document.removeEventListener('touchstart', this.unlockAudio);
+            document.removeEventListener('mousedown', this.unlockAudio);
+        };
+
+        document.addEventListener('touchstart', this.unlockAudio, { once: true });
+        document.addEventListener('mousedown', this.unlockAudio, { once: true });
+    }
+
+    play(soundName) {
+        if (this.sounds[soundName]) {
+            this.sounds[soundName].currentTime = 0;
+            this.sounds[soundName].play().catch(error => {
+                console.error(`Error playing sound: ${soundName}`, error);
+            });
+        }
+    }
+}
+
+
 class PuzzleUI {
     constructor() {
         this.elements = {
             puzzleGrid: document.getElementById('puzzleGrid'),
             piecesContainer: document.getElementById('puzzlePieces'),
             referenceImageContainer: document.querySelector('.reference-image'),
-            congratulations: document.getElementById('congratulations'),
         };
         this.dragPreview = null;
     }
@@ -28,17 +76,18 @@ class PuzzleUI {
     }
 
     createPuzzleGrid(gridSize) {
-        const referenceContainer = this.elements.puzzleGrid.querySelector('.reference-container');
-        this.elements.puzzleGrid.innerHTML = '';
-        this.elements.puzzleGrid.className = `puzzle-grid size-${gridSize}`;
-        if (referenceContainer) {
-            this.elements.puzzleGrid.appendChild(referenceContainer);
-        }
+        const grid = this.elements.puzzleGrid;
+        
+        const slots = grid.querySelectorAll('.puzzle-slot');
+        slots.forEach(slot => slot.remove());
+
+        grid.className = `puzzle-grid size-${gridSize}`;
+        
         for (let i = 0; i < gridSize * gridSize; i++) {
             const slot = document.createElement('div');
             slot.className = 'puzzle-slot';
             slot.dataset.position = i;
-            this.elements.puzzleGrid.appendChild(slot);
+            grid.appendChild(slot);
         }
     }
 
@@ -63,13 +112,26 @@ class PuzzleUI {
         });
     }
 
-    showCongratulations() {
-        this.elements.congratulations.classList.remove('hidden');
-        this.createCelebrationEffects();
+    showInGameMessage(message) {
+        const puzzleContainer = document.querySelector('.puzzle-container');
+        if (!puzzleContainer) return;
+
+        const messageEl = document.createElement('div');
+        messageEl.className = 'in-game-message';
+        messageEl.textContent = message;
+        
+        puzzleContainer.appendChild(messageEl);
+        setTimeout(() => messageEl.remove(), 3100);
     }
 
-    hideCongratulations() {
-        this.elements.congratulations.classList.add('hidden');
+    highlightNextActions() {
+        document.getElementById('shuffleBtn').classList.add('highlight-action');
+        document.getElementById('difficulty').classList.add('highlight-action');
+    }
+
+    removeNextActionsHighlight() {
+        document.getElementById('shuffleBtn').classList.remove('highlight-action');
+        document.getElementById('difficulty').classList.remove('highlight-action');
     }
 
     createCelebrationEffects() {
@@ -169,6 +231,7 @@ class PuzzleUI {
 class NinjaPuzzleGame {
     constructor() {
         this.ui = new PuzzleUI();
+        this.soundManager = new SoundManager();
         this.currentDifficulty = 'easy';
         this.gridSize = DIFFICULTIES[this.currentDifficulty].gridSize;
         this.puzzleData = [];
@@ -187,7 +250,7 @@ class NinjaPuzzleGame {
             this.setupEventListeners();
         };
         this.puzzleImage.onerror = () => {
-            alert('デフォルトの画像が��つかりませんでした。images/default.png を確認してください。');
+            alert('デフォルトの画像が見つかりませんでした。images/default.png を確認してください。');
         };
         this.puzzleImage.src = 'images/default.png';
     }
@@ -198,7 +261,6 @@ class NinjaPuzzleGame {
         this.ui.createPuzzleGrid(this.gridSize);
         this.ui.createPuzzlePieces(this.puzzleData);
         this.ui.createReferenceImage(this.puzzleImage.src);
-        this.ui.hideCongratulations(); // Ensure it's hidden on init
         this.ui.updatePiecesContainerVisibility();
     }
     
@@ -210,10 +272,6 @@ class NinjaPuzzleGame {
         });
         document.getElementById('shuffleBtn').addEventListener('click', () => this.shufflePieces());
         document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
-        document.getElementById('playAgainBtn').addEventListener('click', () => {
-            this.resetGame();
-            this.ui.hideCongratulations();
-        });
         
         document.getElementById('uploadInput').addEventListener('change', (e) => this.loadUserImage(e));
 
@@ -348,7 +406,6 @@ class NinjaPuzzleGame {
             if (piece) {
                 touchedPiece = piece;
                 initialTouch = e.touches[0];
-                // With touch-action: none, we can immediately treat this as a drag.
                 piece.classList.add('dragging');
                 this.ui.createTouchFeedback(piece, initialTouch);
             }
@@ -356,6 +413,8 @@ class NinjaPuzzleGame {
 
         document.addEventListener('touchmove', (e) => {
             if (touchedPiece && initialTouch) {
+                e.preventDefault();
+                
                 const touch = e.touches[0];
                 if (this.ui.dragPreview) {
                     this.ui.dragPreview.style.left = `${touch.clientX - 40}px`;
@@ -364,7 +423,7 @@ class NinjaPuzzleGame {
                 const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
                 this.ui.updateDropZoneHighlight(elementBelow);
             }
-        }, { passive: true }); // This can be passive now as we don't preventDefault
+        }, { passive: false });
 
         document.addEventListener('touchend', (e) => {
             if (touchedPiece) {
@@ -392,7 +451,6 @@ class NinjaPuzzleGame {
         const sourceElement = draggedElement.parentElement;
         const sourceIsSlot = sourceElement.classList.contains('puzzle-slot');
 
-        // Step 1: If the target slot is occupied, move the existing piece out to the container.
         const existingPieceElement = targetSlotElement.querySelector('.puzzle-piece');
         if (existingPieceElement) {
             const existingPieceId = parseInt(existingPieceElement.dataset.pieceId);
@@ -403,24 +461,24 @@ class NinjaPuzzleGame {
             existingPieceData.isPlaced = false;
         }
 
-        // Step 2: If the dragged piece came from another slot, update that slot's state to be empty.
         if (sourceIsSlot) {
             sourceElement.classList.remove('occupied');
-            // Note: We don't clear innerHTML here because appendChild below will move the element.
         }
 
-        // Step 3: Move the dragged piece into the now-guaranteed-to-be-empty target slot.
         targetSlotElement.appendChild(draggedElement);
         targetSlotElement.classList.add('occupied');
         draggedPieceData.currentPosition = parseInt(targetSlotElement.dataset.position);
         draggedPieceData.isPlaced = true;
 
-        // Step 4: Check for win condition.
         this.ui.updatePiecesContainerVisibility();
         if (this.checkWinCondition()) {
             this.gameCompleted = true;
-            this.ui.showCongratulations();
             this.playSound('complete');
+            this.ui.createCelebrationEffects();
+            this.ui.showInGameMessage('🎉 おめでとう！ 🎉');
+            setTimeout(() => {
+                this.ui.highlightNextActions();
+            }, 3000);
         } else if (draggedPieceData.currentPosition === draggedPieceData.correctPosition) {
             this.playSound('correct');
         }
@@ -431,6 +489,7 @@ class NinjaPuzzleGame {
     }
     
     shufflePieces() {
+        this.ui.removeNextActionsHighlight();
         document.querySelectorAll('.puzzle-slot').forEach(slot => {
             const piece = slot.querySelector('.puzzle-piece');
             if (piece) {
@@ -448,26 +507,14 @@ class NinjaPuzzleGame {
     }
     
     resetGame() {
+        this.ui.removeNextActionsHighlight();
         this.gameCompleted = false;
         this.setGridSize();
         this.initializeGame();
-        this.ui.hideCongratulations();
     }
 
     playSound(type) {
-        if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            const frequencies = { correct: 523.25, complete: 659.25 };
-            oscillator.frequency.value = frequencies[type] || 440;
-            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.5);
-        }
+        this.soundManager.play(type);
     }
 }
 
